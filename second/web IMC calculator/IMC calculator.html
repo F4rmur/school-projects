@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculateur d'IMC</title>
+        <link rel="stylesheet" type="text/css" href="IMC.css">
+        <script src="IMC.js"></script>
+    </head>
+
+    <body>
+        <div class="titre">CALCULATEUR D'IMC</div>
+        <!-- Section principale -->
+        <section id="main">
+            <div class="card">
+                <div class="front">
+                    <!-- Entrée pour la taille -->
+                    <div id="entré1">
+                        Saisir votre taille en cm ici ↓
+                        <input type="number" size="3" id="nb1" onclick="resetTailleCard()" />
+                    </div>
+                    <!-- Entrée pour le poids -->
+                    <div id="entré2">
+                        Saisir votre poid en kg ici ↓
+                        <input type="number" size="3" id="nb2" onclick="resetTailleCard()" />
+                    </div>
+                    <!-- Bouton pour déclencher le calcul et l'affichage -->
+                    <input id="bouton" type="button" value="voir le resultat" onclick="afficherResultat()">
+                    <h3><div id="message"></div></h3>
+                </div>
+                <div class="details">
+                    <h3>
+                        Votre IMC est de  <!-- Résultat sera affiché ici -->
+                        <span id="retour"></span>
+                    </h3>
+                    <h4><div id="conseil"></div></h4>
+                    <div id="positio">
+                        <img id="fleche" src="fleche.png">
+                        <img id="positionnement" src="imc-1.jpg">
+                    </div>
+            </div>
+        </section>
+    </body>
+</html>

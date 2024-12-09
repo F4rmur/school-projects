@@ -1,0 +1,61 @@
+html {
+    height: 100%;
+    background: linear-gradient(#0000ff 0%, #ffffff 50%);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+  
+
+  .titre {
+    font-size: 2cm;
+    text-shadow: 0 30px 45px rgba(0, 0, 0, 1);
+}
+
+  #main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 526px;
+
+}
+  
+
+  .card {
+    position: relative;
+    width: 200px;
+    height: 380px;
+    background: #8b89895e;
+    display: flex;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 1);
+    overflow: hidden;
+    transition: 0.5s ease-in-out;
+}
+  
+  .card .front {
+    position: relative;
+    width: 200px;
+}
+
+  #message{
+    color: #aa0000;
+}
+
+  .details{
+    display: none;
+}
+
+  #fleche{
+    width: 80px; 
+    height: 50px; 
+    position: absolute; 
+    top: 248px; 
+    left: 335px; 
+    rotate: 180deg;
+    z-index: 2;
+}
+
+  #positionnement{
+    width: 350px; 
+    height: 200px; 
+    position: absolute;
+    z-index: 1;
+}
