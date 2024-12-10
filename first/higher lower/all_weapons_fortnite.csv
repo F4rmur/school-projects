@@ -1,0 +1,270 @@
+Rarity,Weapon,DPS,Damage,Fire Rate,Magazine Size,Reload Time
+Common,Assault Rifle,165.00,30.00,5.50,30,2.52
+Uncommon,Assault Rifle,170.50,31.00,5.50,30,2.41
+Rare,Assault Rifle,181.50,33.00,5.50,30,2.30
+Epic,Assault Rifle,192.50,35.00,5.50,30,2.18
+Legendary,Assault Rifle,198.00,36.00,5.50,30,2.07
+Common,Makeshift Rifle,129.00,30.00,4.30,20,3.30
+Uncommon,Makeshift Rifle,133.30,31.00,4.30,20,3.15
+Rare,Makeshift Rifle,141.90,33.00,4.30,20,3.00
+Common,Primal Rifle,193.75,31.00,6.25,30,2.50
+Uncommon,Primal Rifle,206.25,33.00,6.25,30,2.30
+Rare,Primal Rifle,218.75,35.00,6.25,30,2.10
+Mythic,Primal Rifle,225.00,36.00,6.25,30,1.90
+Mythic,Skye’s Assault Rifle,222.00,37.00,6.00,30,2.00
+Common,Heavy Assault Rifle,140.25,33.00,4.25,25,3.08
+Uncommon,Heavy Assault Rifle,148.75,35.00,4.25,25,2.94
+Rare,Heavy Assault Rifle,157.25,37.00,4.25,25,2.80
+Epic,Heavy Assault Rifle,165.75,42.00,4.25,25,2.66
+Legendary,Heavy Assault Rifle,174.25,41.00,4.25,25,2.52
+Mythic,Meowscles’ Peow Peow Rifle,180.00,48.00,3.75,25,2.50
+Common,Burst Assault Rifle,122.45,31.00,3.95,20,2.86
+Uncommon,Burst Assault Rifle,126.40,32.00,3.95,20,2.73
+Rare,Burst Assault Rifle,134.30,34.00,3.95,20,2.60
+Epic,Burst Assault Rifle,142.20,36.00,3.95,20,2.47
+Legendary,Burst Assault Rifle,146.15,37.00,3.95,20,2.34
+Mythic,Ocean’s Burst Assault Rifle,154.05,39.00,3.95,20,2.20
+Common,Infantry Rifle,144.00,36.00,4.00,8,2.50
+Uncommon,Infantry Rifle,152.00,38.00,4.00,8,2.40
+Rare,Infantry Rifle,160.00,40.00,4.00,8,2.30
+Epic,Infantry Rifle,168.00,42.00,4.00,10,2.20
+Legendary,Infantry Rifle,176.00,44.00,4.00,10,2.10
+Rare,Suppressed Assault Rifle,165.00,30.00,5.50,30,2.30
+Epic,Suppressed Assault Rifle,176.00,32.00,5.50,30,2.20
+Legendary,Suppressed Assault Rifle,181.50,33.00,5.50,30,2.10
+Rare,Tactical Assault Rifle,154.00,22.00,7.00,30,2.20
+Epic,Tactical Assault Rifle,161.00,23.00,7.00,30,2.10
+Legendary,Tactical Assault Rifle,168.00,24.00,7.00,30,2.00
+Epic,Thermal Scoped Assault Rifle,64.80,36.00,15.00,2,2.20
+Legendary,Thermal Scoped Assault Rifle,66.60,37.00,15.00,2,2.10
+Uncommon,Scoped Assault Rifle,64.00,32.00,15.00,2,2.40
+Rare,Scoped Assault Rifle,68.00,34.00,15.00,2,2.30
+Epic,Scoped Assault Rifle,72.00,36.00,20.00,2,2.20
+Legendary,Scoped Assault Rifle,74.00,37.00,20.00,2,2.10
+Uncommon,Drum Gun,168.00,21.00,8.00,40,3.20
+Rare,Drum Gun,176.00,22.00,8.00,40,3.00
+Mythic,Midas’ Drum Gun,250.00,25.00,10.00,40,2.70
+Mythic,Jules’ Drum Gun,204.00,24.00,8.50,40,2.70
+Mythic,Shadow Midas’ Drum Gun,204.00,24.00,8.50,40,2.70
+Rare,Stark Industries Energy Rifle,162.80,37.00,4.40,15,3.00
+Epic,Stark Industries Energy Rifle,171.60,39.00,4.40,15,2.85
+Legendary,Stark Industries Energy Rifle,180.40,41.00,4.40,15,2.70
+Common,Hammer Assault Rifle,156.60,27.00,5.80,20,2.42
+Uncommon,Hammer Assault Rifle,168.20,29.00,5.80,20,2.31
+Rare,Hammer Assault Rifle,174.00,30.00,5.80,20,2.20
+Epic,Hammer Assault Rifle,185.60,32.00,5.80,20,2.09
+Legendary,Hammer Assault Rifle,191.40,33.00,5.80,20,1.98
+Mythic,Hammer Assault Rifle,203.00,35.00,5.80,20,1.87
+Uncommon,Evochrome Burst Rifle,118.08,24.00,4.92,24,2.90
+Rare,Evochrome Burst Rifle,143.29,23.00,6.23,24,2.90
+Epic,Evochrome Burst Rifle,171.82,22.00,7.81,24,2.90
+Legendary,Evochrome Burst Rifle,188.54,22.00,8.57,24,2.90
+Mythic,Evochrome Burst Rifle,207.69,23.00,9.03,24,2.90
+Common,Pump Shotgun,58.80,91.00,0.70,5,5.10
+Uncommon,Pump Shotgun,64.40,96.00,0.70,5,4.75
+Rare,Pump Shotgun,70.00,102.00,0.70,5,4.40
+Epic,Pump Shotgun,75.60,108.00,0.70,5,4.05
+Legendary,Pump Shotgun,81.20,114.00,0.70,5,3.70
+Common,Makeshift Shotgun,110.00,88.00,1.25,2,3.50
+Uncommon,Makeshift Shotgun,116.25,93.00,1.25,2,3.00
+Rare,Makeshift Shotgun,122.50,98.00,1.25,2,2.50
+Uncommon,Primal Shotgun,216.60,57.00,3.80,12,3.90
+Rare,Primal Shotgun,228.00,60.00,3.80,12,3.80
+Epic,Primal Shotgun,239.40,63.00,3.80,12,3.60
+Legendary,Primal Shotgun,250.80,66.00,3.80,12,3.40
+Mythic,Spire Assassin’s Primal Shotgun,262.20,69.00,3.90,12,3.20
+Common,Tactical Shotgun,108.00,72.00,1.50,8,6.27
+Uncommon,Tactical Shotgun,114.00,76.00,1.50,8,5.99
+Rare,Tactical Shotgun,120.00,80.00,1.50,8,5.70
+Epic,Tactical Shotgun,126.00,84.00,1.50,8,5.41
+Legendary,Tactical Shotgun,132.00,88.00,1.50,8,5.13
+Common,Charge Shotgun,71.40,84.00,0.85,4,4.70
+Uncommon,Charge Shotgun,74.80,88.00,0.85,4,4.50
+Rare,Charge Shotgun,79.05,93.00,0.85,4,4.30
+Epic,Charge Shotgun,83.30,98.00,0.85,5,4.10
+Legendary,Charge Shotgun,86.70,102.00,0.85,5,3.90
+Common,Lever Action Shotgun,88.90,93.60,0.95,6,6.60
+Uncommon,Lever Action Shotgun,93.20,98.10,0.95,6,6.30
+Rare,Lever Action Shotgun,98.30,103.50,0.95,6,6.00
+Epic,Lever Action Shotgun,103.50,108.90,0.95,6,5.70
+Legendary,Lever Action Shotgun,108.60,114.30,0.95,6,5.40
+Epic,Dragon’s Breath Shotgun,152.00,152.00,1.00,4,4.30
+Legendary,Dragon’s Breath Shotgun,160.00,160.00,1.00,4,4.10
+Rare,Heavy Shotgun,70.00,70.00,1.00,7,4.30
+Epic,Heavy Shotgun,74.00,74.00,1.00,7,5.90
+Legendary,Heavy Shotgun,77.00,77.00,1.00,7,5.60
+Common,Drum Shotgun,180.00,45.00,4.00,12,4.70
+Uncommon,Drum Shotgun,192.00,48.00,4.00,12,4.50
+Rare,Drum Shotgun,200.00,50.00,4.00,12,4.30
+Rare,Combat Shotgun,96.90,57.00,1.70,8,5.30
+Epic,Combat Shotgun,102.00,60.00,1.70,8,5.00
+Legendary,Combat Shotgun,107.10,63.00,1.70,8,4.70
+Epic,Double Barrel Shotgun,216.60,114.00,1.90,2,2.80
+Legendary,Double Barrel Shotgun,228.00,120.00,1.90,2,2.70
+Exotic,The Dub,228.00,120.00,1.90,2,2.70
+Common,Two-Shot Shotgun,45.90,54.00,0.85,8,9.24
+Uncommon,Two-Shot Shotgun,48.45,57.00,0.85,8,8.82
+Rare,Two-Shot Shotgun,51.00,60.00,0.85,8,8.40
+Epic,Two-Shot Shotgun,53.55,63.00,0.85,8,7.98
+Legendary,Two-Shot Shotgun,56.10,66.00,0.85,8,7.56
+Mythic,Two-Shot Shotgun,102.81,69.00,1.49,8,7.14
+Common,Prime Shotgun,79.00,76.00,1.05,4,4.50
+Uncommon,Prime Shotgun,83.00,79.00,1.05,4,4.50
+Rare,Prime Shotgun,88.00,84.00,1.05,4,4.50
+Epic,Prime Shotgun,93.00,88.00,1.05,4,4.50
+Legendary,Prime Shotgun,96.00,92.00,1.05,4,4.50
+Mythic,Prime Shotgun,101.00,96.00,1.05,4,4.50
+Uncommon,Evochrome Shotgun,121.50,81.00,1.50,8,5.99
+Rare,Evochrome Shotgun,127.50,85.00,1.50,8,5.70
+Epic,Evochrome Shotgun,133.50,89.00,1.50,8,5.40
+Legendary,Evochrome Shotgun,141.00,94.00,1.50,8,5.10
+Mythic,Evochrome Shotgun,294.00,98.00,1.50,8,4.80
+Common,Submachine Gun,160.00,16.00,10.00,30,2.31
+Uncommon,Submachine Gun,170.00,17.00,10.00,30,2.20
+Rare,Submachine Gun,180.00,18.00,10.00,30,2.10
+Epic,Submachine Gun,190.00,19.00,10.00,35,2.00
+Legendary,Submachine Gun,200.00,20.00,10.00,35,1.89
+Uncommon,Primal SMG,162.00,18.00,9.00,35,2.20
+Rare,Primal SMG,171.00,19.00,9.00,35,2.10
+Epic,Primal SMG,180.00,20.00,9.00,35,2.00
+Legendary,Primal SMG,189.00,21.00,9.00,35,1.90
+Common,Makeshift SMG,153.00,17.00,9.00,25,2.30
+Uncommon,Makeshift SMG,162.00,18.00,9.00,25,2.20
+Rare,Makeshift SMG,171.00,19.00,9.00,25,2.10
+Epic,Compact SMG,200.00,20.00,10.00,40,3.10
+Legendary,Compact SMG,210.00,21.00,10.00,40,3.00
+Common,Suppressed Submachine Gun,156.00,20.00,7.80,30,2.10
+Uncommon,Suppressed Submachine Gun,163.80,21.00,7.80,30,2.10
+Rare,Suppressed Submachine Gun,171.60,22.00,7.80,30,2.00
+Epic,Suppressed Submachine Gun,179.40,23.00,7.80,30,1.90
+Legendary,Suppressed Submachine Gun,187.20,24.00,7.80,30,1.80
+Common,Rapid Fire SMG,195.00,13.00,15.00,20,1.65
+Uncommon,Rapid Fire SMG,210.00,14.00,15.00,20,1.58
+Rare,Rapid Fire SMG,225.00,15.00,15.00,20,1.50
+Epic,Rapid Fire SMG,240.00,16.00,15.00,26,1.42
+Legendary,Rapid Fire SMG,255.00,17.00,15.00,26,1.32
+Common,Machine Pistol,210.00,15.00,14.00,32,2.40
+Uncommon,Machine Pistol,224.00,16.00,14.00,32,2.30
+Rare,Machine Pistol,238.00,17.00,14.00,32,2.20
+Common,Burst SMG,180.00,24.00,7.50,24,2.50
+Uncommon,Burst SMG,187.50,25.00,7.50,24,2.40
+Rare,Burst SMG,195.00,26.00,7.50,24,2.20
+Uncommon,Tactical Submachine Gun,162.00,18.00,9.00,25,2.20
+Rare,Tactical Submachine Gun,171.00,19.00,9.00,25,2.10
+Epic,Tactical Submachine Gun,180.00,20.00,9.00,25,2.00
+Legendary,Tactical Submachine Gun,189.00,21.00,9.00,25,1.90
+Common,Charge SMG,252.30,15.00,16.82,30,1.70
+Uncommon,Charge SMG,269.12,16.00,16.82,30,1.68
+Rare,Charge SMG,285.40,17.00,16.82,30,1.60
+Epic,Charge SMG,302.76,18.00,16.82,30,1.52
+Legendary,Charge SMG,319.58,19.00,16.82,30,1.44
+Common,Pistol,162.00,24.00,6.75,16,1.54
+Uncommon,Pistol,168.70,25.00,6.75,16,1.47
+Rare,Pistol,175.50,26.00,6.75,16,1.40
+Mythic,Pistol,189.00,28.00,6.75,16,1.33
+Legendary,Pistol,195.70,29.00,6.75,16,1.26
+Rare,Suppressed Pistol,168.75,25.00,6.75,12,1.40
+Epic,Suppressed Pistol,175.50,26.00,6.75,12,1.30
+Exotic,Shadow Tracker,195.75,29.00,6.75,16,1.30
+Exotic,Hop Rock Dualies,170.28,43.00,3.96,18,2.70
+Epic,Hand Cannon,60.00,75.00,0.80,7,2.09
+Legendary,Hand Cannon,62.40,78.00,0.80,7,1.98
+Rare,Dual Pistols,154.44,39.00,3.96,18,3.00
+Epic,Dual Pistols,162.36,41.00,3.96,18,2.80
+Mythic,Deadpool’s Hand Cannons,111.09,21.00,5.29,18,2.20
+Uncommon,Six Shooter,170.00,34.00,5.00,6,2.40
+Rare,Six Shooter,180.00,36.00,5.00,6,2.30
+Epic,Six Shooter,190.00,38.00,5.00,6,2.20
+Rare,Dual Supressed Pistols,154.40,39.00,3.96,18,3.00
+Epic,Dual Supressed Pistols,162.40,41.00,3.96,18,2.80
+Legendary,Dual Supressed Pistols,170.30,43.00,3.96,18,2.60
+Common,Revolver,81.00,54.00,1.50,6,2.20
+Uncommon,Revolver,85.50,57.00,1.50,6,2.10
+Rare,Revolver,90.00,60.00,1.50,6,2.00
+Epic,Revolver,94.50,63.00,1.50,6,1.90
+Legendary,Revolver,99.00,66.00,1.50,6,1.80
+Common,Makeshift Revolver,69.00,46.00,1.50,6,2.20
+Uncommon,Makeshift Revolver,72.00,48.00,1.50,6,2.10
+Rare,Makeshift Revolver,75.00,50.00,1.50,6,2.00
+Uncommon,Primal Pistol,69.30,33.00,2.10,8,2.10
+Rare,Primal Pistol,73.50,35.00,2.10,8,2.00
+Epic,Primal Pistol,77.70,37.00,2.10,8,1.90
+Legendary,Primal Pistol,81.90,39.00,2.10,8,1.80
+Epic,Scoped Revolver,67.20,42.00,1.60,6,2.10
+Legendary,Scoped Revolver,70.40,44.00,1.60,6,2.00
+Exotic,Night Hawk,70.40,44.00,1.60,6,2.00
+Common,Bolt-Action Sniper Rifle,31.40,95.00,0.33,1,3.30
+Uncommon,Bolt-Action Sniper Rifle,33.00,100.00,0.33,1,3.15
+Rare,Bolt-Action Sniper Rifle,34.70,105.00,0.33,1,3.00
+Epic,Bolt-Action Sniper Rifle,36.30,110.00,0.33,1,2.35
+Legendary,Bolt-Action Sniper Rifle,38.30,116.00,0.33,1,2.50
+Uncommon,Hunting Rifle,68.80,86.00,0.80,1,1.90
+Rare,Hunting Rifle,72.80,91.00,0.80,1,1.80
+Epic,Hunting Rifle,76.80,96.00,0.80,1,1.70
+Legendary,Hunting Rifle,89.00,100.00,0.80,1,1.60
+Epic,Suppressed Sniper Rifle,31.25,95.00,0.33,1,1.90
+Legendary,Suppressed Sniper Rifle,33.00,100.00,0.33,1,1.80
+Epic,Heavy Sniper Rifle,42.00,126.00,0.33,1,4.30
+Legendary,Heavy Sniper Rifle,44.00,132.00,0.33,1,4.10
+Exotic,Boom Sniper Rifle,70.00,70.00,1.00,5,4.10
+Uncommon,Semi-Auto Sniper Rifle,90.00,75.00,1.20,10,2.50
+Rare,Semi-Auto Sniper Rifle,93.60,78.00,1.20,10,2.30
+Exotic,Storm Scout,76.50,85.00,0.90,6,2.70
+Epic,Storm Scout Sniper Rifle,72.90,81.00,0.00,6,2.80
+Legendary,Storm Scout Sniper Rifle,76.50,85.00,0.00,6,2.70
+Rare,Automatic Sniper Rifle,160.00,40.00,4.00,16,3.80
+Epic,Automatic Sniper Rifle,168.00,42.00,4.00,16,3.60
+Legendary,Automatic Sniper Rifle,176.00,44.00,4.00,16,3.40
+Common,Lever Action Rifle,65.00,52.00,1.25,9,6.30
+Uncommon,Lever Action Rifle,68.75,55.00,1.25,9,6.00
+Rare,Lever Action Rifle,72.50,58.00,1.25,9,5.70
+Epic,Lever Action Rifle,76.25,61.00,1.25,9,5.40
+Mythic,Amban Sniper Rifle,55.00,110.00,0.00,9,2.40
+Common,DMR,112.50,45.00,2.50,10,2.75
+Uncommon,DMR,120.00,48.00,2.50,10,2.62
+Rare,DMR,125.00,50.00,2.50,10,2.50
+Epic,DMR,132.50,53.00,2.50,10,2.38
+Legendary,DMR,137.50,55.00,2.50,10,2.25
+Mythic,DMR,145.00,58.00,2.50,10,2.12
+Common,Rocket Launcher,52.50,70.00,0.75,1,4.68
+Uncommon,Rocket Launcher,63.80,85.00,0.75,1,4.14
+Rare,Rocket Launcher,75.00,100.00,0.75,1,3.60
+Epic,Rocket Launcher,86.30,115.00,0.75,1,3.06
+Legendary,Rocket Launcher,97.50,130.00,0.75,1,2.52
+Rare,Grenade Launcher,100.00,100.00,1.00,6,3.00
+Epic,Grenade Launcher,105.00,105.00,1.00,6,2.80
+Legendary,Grenade Launcher,110.00,110.00,1.00,6,2.70
+Grenade,100,0.00,0.00,6.00,0,0.00
+Exotic,The Big Chill,0.00,0.00,0.75,6,2.70
+Uncommon,Snowball Launcher,53.25,71.00,0.75,6,3.20
+Rare,Snowball Launcher,56.25,75.00,0.75,6,3.00
+Epic,Snowball Launcher,59.25,79.00,0.75,6,2.80
+Legendary,Snowball Launcher,62.25,83.00,0.75,6,2.70
+Uncommon,Egg Launcher,67.00,67.00,1.00,6,3.20
+Rare,Egg Launcher,70.00,70.00,1.00,6,3.00
+Epic,Egg Launcher,74.00,74.00,1.00,6,2.80
+Legendary,Egg Launcher,77.00,77.00,1.00,6,2.70
+Mythic,Kit’s Shockwave Launcher,0.00,0.00,0.00,6,2.70
+Epic,Guided Missile,55.50,74.00,0.00,1,2.40
+Legendary,Guided Missile,57.50,77.00,0.00,1,2.20
+Epic,Quad Launcher,80.00,80.00,1.00,4,4.70
+Legendary,Quad Launcher,84.00,84.00,1.00,4,4.50
+Epic,Proximity Grenade Launcher,43.55,67.00,0.65,2,3.00
+Legendary,Proximity Grenade Launcher,45.50,70.00,0.65,2,2.80
+Rare,Light Machine Gun,200.00,25.00,8.00,100,5.00
+Epic,Light Machine Gun,208.00,26.00,8.00,100,4.70
+Epic,Minigun,240.00,20.00,12.00,0,4.70
+Legendary,Minigun,252.00,21.00,12.00,0,4.50
+Mythic,Brutus’ Minigun,252.00,21.00,12.00,0,4.50
+Uncommon,Makeshift Bow,52.00,52.00,1.00,1,0.80
+Rare,Primal Bow,65.00,65.00,1.00,1,0.80
+Epic,Primal Flame Bow,68.00,68.00,1.00,1,0.70
+Legendary,Primal Flame Bow,72.00,72.00,1.00,1,0.70
+Epic,Primal Stink Bow,68.00,68.00,1.00,1,0.70
+Legendary,Primal Stink Bow,72.00,72.00,1.00,1,0.70
+Rare,Mechanical Bow,85.00,85.00,1.00,1,1.10
+Epic,Mechanical Shockwave Bow,89.00,89.00,1.00,1,1.00
+Legendary,Mechanical Shockwave Bow,94.00,94.00,1.00,1,1.00
+Epic,Mechanical Explosive Bow,89.00,89.00,1.00,1,1.00
+Legendary,Mechanical Explosive Bow,94.00,94.00,1.00,1,1.00
+Common,Harvesting Tool,32.00,20.00,1.60,0,0.00
