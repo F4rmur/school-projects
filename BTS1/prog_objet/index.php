@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil</title> 
-    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/base.css">
-    <link rel="stylesheet" href="accueil.css">
+    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/CSS/base.css">
+    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/CSS/accueil.css">
 </head>
 <body>
     <main>

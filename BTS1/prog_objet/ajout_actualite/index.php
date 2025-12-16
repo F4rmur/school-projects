@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter une actualité</title> 
-    <link rel="stylesheet" href="../base.css">
-    <link rel="stylesheet" href="ajout_actualite.css">
+    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/CSS/base.css">
+    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/CSS/ajout_actualite.css">
 </head>
 <body>
     <main>
