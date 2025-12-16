@@ -10,7 +10,6 @@
 <body>
     <main>
         <?php
-            include('pdo.php');
             include('header.php');
             include('controllers/Actualite.php');
 

@@ -34,6 +34,56 @@ header img:hover {
     transform: scale(1.1);
 }
 
+.menu-dropdown {
+    position: relative;
+}
+
+.menu-dropdown summary {
+    background-color: #34495e;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.menu-dropdown ul {
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    min-width: 200px;
+    display: none;
+}
+
+.menu-dropdown[open] ul {
+    display: block;
+}
+
+.menu-dropdown li {
+    border-bottom: 1px solid #eee;
+}
+
+.menu-dropdown li:last-child {
+    border-bottom: none;
+}
+
+.menu-dropdown a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+}
+
+.menu-dropdown a:hover {
+    background-color: #f8f9fa;
+}
+
 main {
     max-width: 1200px;
     margin: 0 auto;

@@ -11,8 +11,6 @@
     <main>
         <?php
             include(dirname(__DIR__) . '/header.php');
-            include(dirname(__DIR__) . '/pdo.php');
-
 
             // Traitement du formulaire
             $message = '';

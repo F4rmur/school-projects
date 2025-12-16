@@ -10,7 +10,6 @@
 <body>
     <main>
         <?php
-            include(dirname(__DIR__) . '/pdo.php');
             include(dirname(__DIR__) . '/header.php');
             include(dirname(__DIR__) . '/controllers/Actualite.php');
 
