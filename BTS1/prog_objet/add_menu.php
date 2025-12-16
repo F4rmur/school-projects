@@ -2,7 +2,7 @@
 
 // Script pour ajouter un lien menu en console
 // Usage: php BTS1\prog_objet\add_menu.php "nom_du_lien" "url_du_lien"
-require_once 'pdo.php';
+require_once 'controllers/pdo.php';
 
 if ($argc < 3) {
     echo "Usage: php BTS1\prog_objet\add_menu.php \"nom_du_lien\" \"url_du_lien\"\n";

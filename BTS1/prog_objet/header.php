@@ -1,6 +1,6 @@
 <header>
     <?php
-        include('pdo.php');
+        include('controllers/pdo.php');
         include('controllers/Menu.php');
         $menus = Menu::getAll();
     ?>
