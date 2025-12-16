@@ -1,6 +1,6 @@
 <?php
 
-class Menu
+class Menu extends Database
 {
     private $id_lien;
     private $nom_lien;
@@ -25,7 +25,7 @@ class Menu
     }
 
     public static function getAll() {
-        $db = getDB();
+        $db = self::getInstance()->getConnection();
         $stmt = $db->prepare("SELECT id_lien, nom_lien, lien FROM menu ORDER BY id_lien");
         $stmt->execute();
         $menus = [];

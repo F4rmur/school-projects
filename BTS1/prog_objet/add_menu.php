@@ -18,7 +18,7 @@ if (empty($nom_lien) || empty($lien)) {
 }
 
 try {
-    $db = getDB();
+    $db = Database::getInstance()->getConnection();
     $stmt = $db->prepare("INSERT INTO menu (nom_lien, lien) VALUES (?, ?)");
     $stmt->execute([$nom_lien, $lien]);
     echo "Le lien menu \"$nom_lien\" a été ajouté avec succès !\n";

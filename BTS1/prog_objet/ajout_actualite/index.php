@@ -23,7 +23,7 @@
                     $message = '<div class="message error">Veuillez remplir tous les champs obligatoires.</div>';
                 } else {
                     try {
-                        $db = getDB();
+                        $db = Database::getInstance()->getConnection();
                         $contenus_json = json_encode([['type' => 'texte', 'data' => $contenu]]);
                         $stmt = $db->prepare("INSERT INTO actualite (Titre, contenus, date) VALUES (?, ?, ?)");
                         $stmt->execute([$titre, $contenus_json, $date_creation]);

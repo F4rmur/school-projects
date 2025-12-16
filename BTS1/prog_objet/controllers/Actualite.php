@@ -1,6 +1,6 @@
 <?php
 
-class Actualite
+class Actualite extends Database
 {
     private $id;
     private $contenus = [];
@@ -43,7 +43,7 @@ class Actualite
     }
 
     public static function getLatest($limit = 5) {
-        $db = getDB();
+        $db = self::getInstance()->getConnection();
         $stmt = $db->prepare("SELECT Id_actu, Titre, contenus, date FROM actualite ORDER BY date DESC LIMIT ?");
         $stmt->execute([$limit]);
         $actualites = [];

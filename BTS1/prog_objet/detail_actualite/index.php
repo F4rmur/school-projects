@@ -17,7 +17,7 @@
             $actu = null;
             if ($id) {
                 try {
-                    $db = getDB();
+                    $db = Database::getInstance()->getConnection();
                     $stmt = $db->prepare("SELECT Id_actu, Titre, contenus, date FROM actualite WHERE Id_actu = ?");
                     $stmt->execute([$id]);
                     $row = $stmt->fetch();

@@ -20,7 +20,7 @@ class Database {
         ];
 
         try {
-            $this->pdo = new PDO($dsn, $user, $pass, $options); //erreur insolvable
+            $this->pdo = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
             throw new PDOException($e->getMessage(), (int)$e->getCode());
         }
