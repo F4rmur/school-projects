@@ -5,7 +5,7 @@
 require_once 'pdo.php';
 
 if ($argc < 3) {
-    echo "Usage: php add_menu.php \"nom_du_lien\" \"url_du_lien\"\n";
+    echo "Usage: php BTS1\prog_objet\add_menu.php \"nom_du_lien\" \"url_du_lien\"\n";
     exit(1);
 }
 
