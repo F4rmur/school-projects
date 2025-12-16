@@ -57,7 +57,8 @@ class Database {
 }
 
 // Fonction utilitaire pour obtenir la connexion
+/*
 function getDB() {
     return Database::getInstance()->getConnection();
 }
-?>
+*/
