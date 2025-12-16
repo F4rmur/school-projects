@@ -12,10 +12,10 @@
         <?php
             include('pdo.php');
             include('header.php');
-            include('controllers/actualite.php');
+            include('controllers/Actualite.php');
 
             echo'<h1> liste des actualités </h1>';
-            $actualites = actualite::getLatest(5);
+            $actualites = Actualite::getLatest(5);
             foreach ($actualites as $actu) {
                 $preview = '';
                 foreach ($actu->getContenus() as $contenu) {

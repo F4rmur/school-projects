@@ -12,7 +12,7 @@
         <?php
             include(dirname(__DIR__) . '/pdo.php');
             include(dirname(__DIR__) . '/header.php');
-            include(dirname(__DIR__) . '/controllers/actualite.php');
+            include(dirname(__DIR__) . '/controllers/Actualite.php');
 
             $id = $_GET['id'] ?? null;
             $actu = null;
@@ -23,7 +23,7 @@
                     $stmt->execute([$id]);
                     $row = $stmt->fetch();
                     if ($row) {
-                        $actu = new actualite($row['Id_actu'], $row['Titre'], json_decode($row['contenus'], true), $row['date']);
+                        $actu = new Actualite($row['Id_actu'], $row['Titre'], json_decode($row['contenus'], true), $row['date']);
                     }
                 } catch (PDOException $e) {
                     // Handle error

@@ -1,6 +1,6 @@
 <?php
 
-class actualite
+class Actualite
 {
     private $id;
     private $contenus = [];
@@ -48,7 +48,7 @@ class actualite
         $stmt->execute([$limit]);
         $actualites = [];
         while ($row = $stmt->fetch()) {
-            $actualites[] = new actualite($row['Id_actu'], $row['Titre'], json_decode($row['contenus'], true), $row['date']);
+            $actualites[] = new Actualite($row['Id_actu'], $row['Titre'], json_decode($row['contenus'], true), $row['date']);
         }
         return $actualites;
     }
