@@ -1,12 +1,13 @@
 <?php
+namespace Controllers\Database;
 
 class Menu extends Database
 {
-    private $id_lien;
-    private $nom_lien;
-    private $lien;
+    private int $id_lien;
+    private string $nom_lien;
+    private string $lien;
 
-    public function __construct($id_lien, $nom_lien, $lien) {
+    public function __construct(int $id_lien, string $nom_lien, string $lien) {
         $this->id_lien = $id_lien;
         $this->nom_lien = $nom_lien;
         $this->lien = $lien;

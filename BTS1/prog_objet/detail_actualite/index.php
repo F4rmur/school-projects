@@ -1,3 +1,4 @@
+<?php namespace Controllers\Database; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -24,7 +25,7 @@
                     if ($row) {
                         $actu = new Actualite($row['Id_actu'], $row['Titre'], json_decode($row['contenus'], true), $row['date']);
                     }
-                } catch (PDOException $e) {
+                } catch (\PDOException $e) {
                     // Handle error
                 }
             }

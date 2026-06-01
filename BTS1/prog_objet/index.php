@@ -1,3 +1,4 @@
+<?php namespace Controllers\Database; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

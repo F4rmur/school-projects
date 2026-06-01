@@ -1,13 +1,14 @@
 <?php
+namespace Controllers\Database;
 
 class Actualite extends Database
 {
-    private $id;
-    private $contenus = [];
-    private $titre = '';
-    private $date = '';
+    private int $id;
+    private array $contenus = [];
+    private string $titre = '';
+    private string $date = '';
 
-    public function __construct($id, $titre, $contenus, $date) {
+    public function __construct(int $id, string $titre, array $contenus, string $date) {
         $this->id = $id;
         $this->titre = $titre;
         $this->contenus = $contenus;

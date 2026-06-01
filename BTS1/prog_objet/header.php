@@ -1,3 +1,4 @@
+<?php namespace Controllers\Database; ?>
 <header>
     <?php
         include('controllers/pdo.php');

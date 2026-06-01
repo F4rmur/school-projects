@@ -1,3 +1,4 @@
+<?php namespace Controllers\Database; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -28,7 +29,7 @@
                         $stmt = $db->prepare("INSERT INTO actualite (Titre, contenus, date) VALUES (?, ?, ?)");
                         $stmt->execute([$titre, $contenus_json, $date_creation]);
                         $message = '<div class="message success">L\'actualité "' . htmlspecialchars($titre) . '" a été ajoutée avec succès !</div>';
-                    } catch (PDOException $e) {
+                    } catch (\PDOException $e) {
                         $message = '<div class="message error">Erreur lors de l\'ajout : ' . htmlspecialchars($e->getMessage()) . '</div>';
                     }
                 }

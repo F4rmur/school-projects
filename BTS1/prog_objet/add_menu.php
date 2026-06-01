@@ -1,4 +1,5 @@
 <?php
+namespace Controllers\Database;
 
 // Script pour ajouter un lien menu en console
 // Usage: php BTS1\prog_objet\add_menu.php "nom_du_lien" "url_du_lien"
@@ -22,7 +23,7 @@ try {
     $stmt = $db->prepare("INSERT INTO menu (nom_lien, lien) VALUES (?, ?)");
     $stmt->execute([$nom_lien, $lien]);
     echo "Le lien menu \"$nom_lien\" a été ajouté avec succès !\n";
-} catch (PDOException $e) {
+} catch (\PDOException $e) {
     echo "Erreur lors de l'ajout: " . $e->getMessage() . "\n";
     exit(1);
 }
