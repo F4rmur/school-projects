@@ -15,23 +15,23 @@ class Actualite extends Database
         $this->date = $date;
     }
 
-    public function getId() {
+    public function getId(): int {
         return $this->id;
     }
 
-    public function getTitre() {
+    public function getTitre(): string {
         return $this->titre;
     }
 
-    public function getContenus() {
+    public function getContenus(): array {
         return $this->contenus;
     }
 
-    public function getDate() {
+    public function getDate(): string {
         return $this->date;
     }
 
-    public function afficheActu() {
+    public function afficheActu(): void {
         foreach ($this->contenus as $contenu)
             if ($contenu != null)
                 if ($contenu['type'] == 'texte') {
@@ -43,7 +43,7 @@ class Actualite extends Database
                 }
     }
 
-    public static function getLatest($limit = 5) {
+    public static function getLatest($limit = 5): array {
         $db = self::getInstance()->getConnection();
         $stmt = $db->prepare("SELECT Id_actu, Titre, contenus, date FROM actualite ORDER BY date DESC LIMIT ?");
         $stmt->execute([$limit]);

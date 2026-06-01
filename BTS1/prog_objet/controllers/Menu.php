@@ -13,19 +13,19 @@ class Menu extends Database
         $this->lien = $lien;
     }
 
-    public function getIdLien() {
+    public function getIdLien(): int {
         return $this->id_lien;
     }
 
-    public function getNomLien() {
+    public function getNomLien(): string {
         return $this->nom_lien;
     }
 
-    public function getLien() {
+    public function getLien(): string {
         return $this->lien;
     }
 
-    public static function getAll() {
+    public static function getAll(): array {
         $db = self::getInstance()->getConnection();
         $stmt = $db->prepare("SELECT id_lien, nom_lien, lien FROM menu ORDER BY id_lien");
         $stmt->execute();
