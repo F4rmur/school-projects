@@ -1,12 +1,15 @@
-<?php namespace Controllers\Database; ?>
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use App\Controllers\database\Database;
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une actualité</title> 
-    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/CSS/base.css">
-    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/CSS/ajout_actualite.css">
+    <title>Ajouter une actualité</title>
+    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/public/CSS/base.css">
+    <link rel="stylesheet" href="/prog_objet/BTS1/prog_objet/public/CSS/ajout_actualite.css">
 </head>
 <body>
     <main>

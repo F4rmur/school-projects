@@ -1,0 +1,9 @@
+{
+    "name": "prog_objet/project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "require": {}
+}

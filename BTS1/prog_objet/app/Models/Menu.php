@@ -1,5 +1,5 @@
 <?php
-namespace Controllers\Database;
+namespace App\Models;
 
 class Menu extends Database
 {
@@ -31,10 +31,8 @@ class Menu extends Database
         $stmt->execute();
         $menus = [];
         while ($row = $stmt->fetch()) {
-            $menus[] = new Menu($row['id_lien'], $row['nom_lien'], $row['lien']);
+            $menus[] = new Menu((int)$row['id_lien'], $row['nom_lien'], $row['lien']);
         }
         return $menus;
     }
 }
-
-?>

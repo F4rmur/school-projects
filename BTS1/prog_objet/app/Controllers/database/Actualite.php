@@ -1,5 +1,5 @@
 <?php
-namespace Controllers\Database;
+namespace App\Controllers\database;
 
 class Actualite extends Database
 {
@@ -39,7 +39,7 @@ class Actualite extends Database
                 } elseif ($contenu['type'] == 'image') {
                     echo '<img src="' . htmlspecialchars($contenu['data']) . '" alt="Image">';
                 } elseif ($contenu['type'] == 'video') {
-                    echo '<video controls><source src="' . htmlspecialchars($contenu['data']) . '" type="video/mp4">La vidéo n\'est pas supportée</video>';
+                    echo '<video controls><source src="' . htmlspecialchars($contenu['data']) . '" type="video/mp4">La vidéo n\'t est pas supportée</video>';
                 }
     }
 
@@ -49,11 +49,8 @@ class Actualite extends Database
         $stmt->execute([$limit]);
         $actualites = [];
         while ($row = $stmt->fetch()) {
-            $actualites[] = new Actualite($row['Id_actu'], $row['Titre'], json_decode($row['contenus'], true), $row['date']);
+            $actualites[] = new Actualite((int)$row['Id_actu'], $row['Titre'], json_decode($row['contenus'], true), $row['date']);
         }
         return $actualites;
     }
 }
-
-
-?>

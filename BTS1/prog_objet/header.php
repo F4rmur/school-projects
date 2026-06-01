@@ -1,12 +1,17 @@
-<?php namespace Controllers\Database; ?>
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+use App\Controllers\database\Menu as DbMenu;
+
+$menus = [];
+try {
+    $menus = DbMenu::getAll();
+} catch (\Throwable $e) {
+    $menus = [];
+}
+?>
 <header>
-    <?php
-        include('controllers/database/Database.php');
-        include('controllers/database/Menu.php');
-        $menus = Menu::getAll();
-    ?>
-    <a href='/prog_objet/BTS1/prog_objet/index.php'><img src="/prog_objet/BTS1/prog_objet/ressources/home_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" alt="accueil" name='accueil_icon'></a>
-    <a href='/prog_objet/BTS1/prog_objet/ajout_actualite/index.php'><img src="/prog_objet/BTS1/prog_objet/ressources/add_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" alt="ajout actualité" name='ajout_icon'></a>
+    <a href='/prog_objet/BTS1/prog_objet/index.php'><img src="/prog_objet/BTS1/prog_objet/public/ressources/home_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" alt="accueil" name='accueil_icon'></a>
+    <a href='/prog_objet/BTS1/prog_objet/ajout_actualite/index.php'><img src="/prog_objet/BTS1/prog_objet/public/ressources/add_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" alt="ajout actualité" name='ajout_icon'></a>
     <details class="menu-dropdown">
         <summary>Menu</summary>
         <ul>
