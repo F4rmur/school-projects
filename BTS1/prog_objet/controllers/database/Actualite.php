@@ -43,7 +43,7 @@ class Actualite extends Database
                 }
     }
 
-    public static function getLatest($limit = 5): array {
+    public static function getLatest(int $limit = 5): array {
         $db = self::getInstance()->getConnection();
         $stmt = $db->prepare("SELECT Id_actu, Titre, contenus, date FROM actualite ORDER BY date DESC LIMIT ?");
         $stmt->execute([$limit]);

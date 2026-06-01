@@ -12,7 +12,7 @@
     <main>
         <?php
             include(dirname(__DIR__) . '/header.php');
-            include(dirname(__DIR__) . '/controllers/Actualite.php');
+            include(dirname(__DIR__) . '/controllers/database/Actualite.php');
 
             $id = $_GET['id'] ?? null;
             $actu = null;

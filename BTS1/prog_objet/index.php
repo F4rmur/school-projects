@@ -12,7 +12,7 @@
     <main>
         <?php
             include('header.php');
-            include('controllers/Actualite.php');
+            include('controllers/database/Actualite.php');
 
             echo'<h1> liste des actualités </h1>';
             $actualites = Actualite::getLatest(5);
