@@ -6,5 +6,4 @@
             <option value="{{ $locale }}" @selected(app()->getLocale() === $locale)>{{ $language }}</option>
         @endforeach
     </select>
-    <button class="nav-button" type="submit">{{ __('ui.language.apply') }}</button>
 </form>
