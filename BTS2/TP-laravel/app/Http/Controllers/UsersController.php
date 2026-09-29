@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\users;
+use App\Models\users as UserRecord;
+use App\Repositories\Contracts\RoleRepository;
+use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Silber\Bouncer\BouncerFacade as Bouncer;
-use Silber\Bouncer\Database\Role;
 
 class UsersController extends Controller
 {
+    public function __construct(
+        private UserRepository $users,
+        private RoleRepository $roles,
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = users::with('absences.motif')
-            ->withCount('absences')
-            ->orderBy('nom')
-            ->get();
+        $users = $this->users->allWithAbsences();
 
         return view('users.index', compact('users'));
     }
@@ -31,9 +32,9 @@ class UsersController extends Controller
      */
     public function create()
     {
-        Gate::authorize('create', users::class);
+        Gate::authorize('create', UserRecord::class);
 
-        $roles = Role::query()->orderBy('name')->get();
+        $roles = $this->roles->all();
 
         return view('users.create', compact('roles'));
     }
@@ -43,7 +44,7 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('create', users::class);
+        Gate::authorize('create', UserRecord::class);
 
         $validated = $request->validate([
             'nom' => ['required', 'string', 'max:255'],
@@ -59,10 +60,8 @@ class UsersController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         unset($validated['password_confirmation']);
 
-        $user = users::create($validated);
-        $authUser = User::query()->findOrFail($user->getKey());
-        Bouncer::sync($authUser)->roles([$role]);
-        Bouncer::refresh($authUser);
+        $user = $this->users->create($validated);
+        $this->roles->syncForUser($user->getKey(), $role);
 
         return redirect()->route('user.show', $user)
             ->with('success', 'Utilisateur créé avec succès.');
@@ -71,7 +70,7 @@ class UsersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(users $idUser)
+    public function show(UserRecord $idUser)
     {
         $idUser->load('absences.motif');
 
@@ -81,12 +80,12 @@ class UsersController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(users $idUser)
+    public function edit(UserRecord $idUser)
     {
         Gate::authorize('update', $idUser);
 
-        $roles = Role::query()->orderBy('name')->get();
-        $currentRole = User::query()->findOrFail($idUser->getKey())->getRoles()->first()?->name ?? 'utilisateur';
+        $roles = $this->roles->all();
+        $currentRole = $this->roles->userRoleName($idUser->getKey()) ?? 'utilisateur';
 
         return view('users.edit', [
             'user' => $idUser,
@@ -98,7 +97,7 @@ class UsersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, users $idUser)
+    public function update(Request $request, UserRecord $idUser)
     {
         Gate::authorize('update', $idUser);
 
@@ -125,11 +124,8 @@ class UsersController extends Controller
             unset($validated['password']);
         }
 
-        $idUser->update($validated);
-
-        $authUser = User::query()->findOrFail($idUser->getKey());
-        Bouncer::sync($authUser)->roles([$role]);
-        Bouncer::refresh($authUser);
+        $this->users->update($idUser, $validated);
+        $this->roles->syncForUser($idUser->getKey(), $role);
 
         return redirect()->route('user.show', $idUser)
             ->with('success', 'Utilisateur modifié avec succès.');
@@ -138,7 +134,7 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(users $users)
+    public function destroy(UserRecord $users)
     {
         //
     }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\absence;
-use App\Models\Motif;
-use App\Models\users;
+use App\Models\absence as AbsenceRecord;
+use App\Repositories\Contracts\AbsenceRepository;
+use App\Repositories\Contracts\MotifRepository;
+use App\Repositories\Contracts\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,14 +14,18 @@ use Illuminate\Validation\Rule;
 
 class AbsenceController extends Controller
 {
+    public function __construct(
+        private AbsenceRepository $absences,
+        private MotifRepository $motifs,
+        private UserRepository $users,
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $absences = absence::with(['user', 'motif'])
-            ->orderByDesc('date_debut')
-            ->get();
+        $absences = $this->absences->allWithRelations();
 
         return view('absences.index', compact('absences'));
     }
@@ -30,12 +35,10 @@ class AbsenceController extends Controller
      */
     public function create(Request $request)
     {
-        Gate::authorize('create', absence::class);
+        Gate::authorize('create', AbsenceRecord::class);
 
-        $users = Gate::allows('manage-all-absences')
-            ? users::orderBy('nom')->get()
-            : users::whereKey(Auth::id())->get();
-        $motifs = Motif::orderBy('libelle')->get();
+        $users = $this->users->forAbsenceForm(Gate::allows('manage-all-absences'), (int) Auth::id());
+        $motifs = $this->motifs->allOrderedByLibelle();
         $selectedUserId = $request->integer('user_id') ?: old('user_id');
 
         return view('absences.create', compact('users', 'motifs', 'selectedUserId'));
@@ -46,7 +49,7 @@ class AbsenceController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('create', absence::class);
+        Gate::authorize('create', AbsenceRecord::class);
 
         $validated = $request->validate([
             'user_id' => [
@@ -63,7 +66,7 @@ class AbsenceController extends Controller
                         return;
                     }
 
-                    $user = users::find($request->input('user_id'));
+                    $user = $this->users->find((int) $request->input('user_id'));
                     $requiredSexe = $value === 'paternite' ? 'homme' : 'femme';
 
                     if (! $user || $user->sexe !== $requiredSexe) {
@@ -89,13 +92,7 @@ class AbsenceController extends Controller
                     if ($request->input('type_conge') === 'conges_payes') {
                         $dateDebutCarbon = Carbon::parse($dateDebut);
                         $dateFinCarbon = Carbon::parse($value);
-                        $paidAbsences = absence::query()
-                            ->where('user_id', $userId)
-                            ->where(function ($query): void {
-                                $query->where('conges_payes', true)
-                                    ->orWhere('type_conge', 'conges_payes');
-                            })
-                            ->get(['date_debut', 'date_fin']);
+                        $paidAbsences = $this->absences->paidForUser((int) $userId);
 
                         for ($year = $dateDebutCarbon->year; $year <= $dateFinCarbon->year; $year++) {
                             $yearStart = Carbon::create($year, 1, 1);
@@ -123,11 +120,7 @@ class AbsenceController extends Controller
                         }
                     }
 
-                    $overlap = absence::query()
-                        ->where('user_id', $userId)
-                        ->whereDate('date_debut', '<=', $value)
-                        ->whereDate('date_fin', '>=', $dateDebut)
-                        ->exists();
+                    $overlap = $this->absences->hasOverlap((int) $userId, $dateDebut, $value);
 
                     if ($overlap) {
                         $fail('Cette période chevauche déjà une absence de cet utilisateur.');
@@ -137,7 +130,7 @@ class AbsenceController extends Controller
         ]);
 
         $validated['conges_payes'] = $validated['type_conge'] === 'conges_payes';
-        $absence = absence::create($validated);
+        $absence = $this->absences->create($validated);
 
         return redirect()->route('user.show', $absence->user_id)
             ->with('success', 'Absence créée avec succès.');
@@ -146,9 +139,9 @@ class AbsenceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(absence $numeroAbsence)
+    public function show(AbsenceRecord $numeroAbsence)
     {
-        $numeroAbsence->load(['user', 'motif']);
+        $this->absences->loadRelations($numeroAbsence);
 
         return view('absences.show', ['absence' => $numeroAbsence]);
     }
@@ -156,14 +149,12 @@ class AbsenceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(absence $absence)
+    public function edit(AbsenceRecord $absence)
     {
         Gate::authorize('update', $absence);
 
-        $users = Gate::allows('manage-all-absences')
-            ? users::orderBy('nom')->get()
-            : users::whereKey(Auth::id())->get();
-        $motifs = Motif::orderBy('libelle')->get();
+        $users = $this->users->forAbsenceForm(Gate::allows('manage-all-absences'), (int) Auth::id());
+        $motifs = $this->motifs->allOrderedByLibelle();
 
         return view('absences.edit', compact('absence', 'users', 'motifs'));
     }
@@ -171,7 +162,7 @@ class AbsenceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, absence $absence)
+    public function update(Request $request, AbsenceRecord $absence)
     {
         Gate::authorize('update', $absence);
 
@@ -188,7 +179,7 @@ class AbsenceController extends Controller
         ]);
 
         $validated['conges_payes'] = $validated['type_conge'] === 'conges_payes';
-        $absence->update($validated);
+        $this->absences->update($absence, $validated);
 
         return redirect()->route('absence.show', $absence)
             ->with('success', 'Absence modifiée avec succès.');
@@ -197,11 +188,11 @@ class AbsenceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(absence $absence)
+    public function destroy(AbsenceRecord $absence)
     {
         Gate::authorize('delete', $absence);
         $userId = $absence->user_id;
-        $absence->delete();
+        $this->absences->delete($absence);
 
         return redirect()->route('user.show', $userId)
             ->with('success', 'Absence supprimée avec succès.');

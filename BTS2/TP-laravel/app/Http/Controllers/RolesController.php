@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Contracts\RoleRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
-use Silber\Bouncer\BouncerFacade as Bouncer;
-use Silber\Bouncer\Database\Ability;
 use Silber\Bouncer\Database\Role;
 
 class RolesController extends Controller
 {
+    public function __construct(private RoleRepository $roles) {}
+
     public function index(): View
     {
         Gate::authorize('manage-roles');
 
-        $roles = Role::query()->with('abilities')->orderBy('name')->get();
+        $roles = $this->roles->allWithAbilities();
 
         return view('roles.index', compact('roles'));
     }
@@ -28,7 +29,7 @@ class RolesController extends Controller
 
         return view('roles.form', [
             'role' => null,
-            'abilities' => $this->availableAbilities(),
+            'abilities' => $this->roles->availableAbilities(),
             'roleAbilities' => [],
         ]);
     }
@@ -41,15 +42,13 @@ class RolesController extends Controller
             'name' => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('roles', 'name')],
             'title' => ['required', 'string', 'max:255'],
             'abilities' => ['sometimes', 'array'],
-            'abilities.*' => ['string', Rule::in($this->availableAbilityNames())],
+            'abilities.*' => ['string', Rule::in($this->roles->availableAbilityNames())],
         ]);
 
         $abilityNames = $validated['abilities'] ?? [];
         unset($validated['abilities']);
 
-        $role = Role::query()->create($validated);
-        Bouncer::sync($role)->abilities($abilityNames);
-        Bouncer::refresh($role);
+        $this->roles->create($validated, $abilityNames);
 
         return redirect()->route('roles.index')->with('success', 'Rôle créé avec succès.');
     }
@@ -60,8 +59,8 @@ class RolesController extends Controller
 
         return view('roles.form', [
             'role' => $role,
-            'abilities' => $this->availableAbilities(),
-            'roleAbilities' => $role->abilities()->pluck('name')->all(),
+            'abilities' => $this->roles->availableAbilities(),
+            'roleAbilities' => $this->roles->abilityNames($role),
         ]);
     }
 
@@ -79,32 +78,18 @@ class RolesController extends Controller
             ],
             'title' => ['required', 'string', 'max:255'],
             'abilities' => ['sometimes', 'array'],
-            'abilities.*' => ['string', Rule::in($this->availableAbilityNames())],
+            'abilities.*' => ['string', Rule::in($this->roles->availableAbilityNames())],
         ]);
 
         $abilityNames = $validated['abilities'] ?? [];
         unset($validated['abilities']);
 
-        $role->update($validated);
-
         if ($role->name === 'admin') {
             $abilityNames[] = 'manage-roles';
         }
 
-        Bouncer::sync($role)->abilities(array_values(array_unique($abilityNames)));
-        Bouncer::refresh($role);
+        $this->roles->update($role, $validated, array_values(array_unique($abilityNames)));
 
         return redirect()->route('roles.index')->with('success', 'Rôle modifié avec succès.');
-    }
-
-    private function availableAbilities(): \Illuminate\Database\Eloquent\Collection
-    {
-        return Ability::query()->simpleAbility()->orderBy('name')->get();
-    }
-
-    /** @return list<string> */
-    private function availableAbilityNames(): array
-    {
-        return $this->availableAbilities()->pluck('name')->all();
     }
 }

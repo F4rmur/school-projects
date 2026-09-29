@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Motif;
+use App\Repositories\Contracts\MotifRepository;
 use Illuminate\Http\Request;
 
 class MotifController extends Controller
 {
+    public function __construct(private MotifRepository $motifs) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('motifs/vueMotifs', ['motifs' => Motif::all()]);
+        return view('motifs/vueMotifs', ['motifs' => $this->motifs->all()]);
     }
 
     /**
