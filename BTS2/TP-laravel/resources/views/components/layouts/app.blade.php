@@ -3,26 +3,35 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Suivi des absences' }}</title>
+    <title>{{ $title ?? __('ui.brand') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="{{ route('accueil') }}">Suivi<span>.</span></a>
-        <nav class="site-nav" aria-label="Navigation principale">
-            <a class="{{ request()->routeIs('absence.*') ? 'active' : '' }}" href="{{ route('absence.index') }}">Absences</a>
-            <a class="{{ request()->routeIs('user.*') ? 'active' : '' }}" href="{{ route('user.index') }}">Utilisateurs</a>
+        <a class="brand" href="{{ route('accueil') }}">{{ __('ui.brand') }}<span>.</span></a>
+        <nav class="site-nav" aria-label="{{ __('ui.navigation.main') }}">
+            <a class="{{ request()->routeIs('absence.*') ? 'active' : '' }}" href="{{ route('absence.index') }}">{{ __('ui.navigation.absences') }}</a>
+            <a class="{{ request()->routeIs('user.*') ? 'active' : '' }}" href="{{ route('user.index') }}">{{ __('ui.navigation.users') }}</a>
+            @include('components.language-switcher')
             @auth
                 @can('manage-roles')
-                    <a class="{{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">Rôles</a>
+                    <a class="{{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">{{ __('ui.navigation.roles') }}</a>
                 @endcan
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button class="nav-button" type="submit">Se déconnecter</button>
+                    <button class="nav-button" type="submit">{{ __('ui.navigation.logout') }}</button>
                 </form>
             @endauth
         </nav>
     </header>
-    <main class="page-shell">{{ $slot }}</main>
+    <main class="page-shell">
+        @if (session('success'))
+            <div class="panel empty-state" role="status">{{ session('success') }}</div>
+        @endif
+        @if ($errors->any())
+            <div class="panel empty-state" role="alert">{{ __('ui.validation.form_errors') }}</div>
+        @endif
+        {{ $slot }}
+    </main>
 </body>
 </html>

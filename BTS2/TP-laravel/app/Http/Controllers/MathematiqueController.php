@@ -6,25 +6,25 @@ class MathematiqueController extends Controller
 {
     public function addition(float $a, float $b): string
     {
-        return "$a + $b = ".($a + $b);
+        return __('ui.math.addition', ['a' => $a, 'b' => $b, 'result' => $a + $b]);
     }
 
     public function soustraction(float $a, float $b): string
     {
-        return "$a - $b = ".($a - $b);
+        return __('ui.math.subtraction', ['a' => $a, 'b' => $b, 'result' => $a - $b]);
     }
 
     public function multiplication(float $a, float $b): string
     {
-        return "$a x $b = ".($a * $b);
+        return __('ui.math.multiplication', ['a' => $a, 'b' => $b, 'result' => $a * $b]);
     }
 
     public function division(float $a, float $b): string
     {
         if ($b === 0.0) {
-            return 'Division par zéro impossible';
+            return __('ui.math.division_by_zero');
         }
 
-        return "$a / $b = ".($a / $b);
+        return __('ui.math.division', ['a' => $a, 'b' => $b, 'result' => $a / $b]);
     }
 }

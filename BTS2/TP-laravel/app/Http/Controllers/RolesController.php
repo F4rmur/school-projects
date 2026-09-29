@@ -50,7 +50,7 @@ class RolesController extends Controller
 
         $this->roles->create($validated, $abilityNames);
 
-        return redirect()->route('roles.index')->with('success', 'Rôle créé avec succès.');
+        return redirect()->route('roles.index')->with('success', __('ui.flash.role_created'));
     }
 
     public function edit(Role $role): View
@@ -90,6 +90,6 @@ class RolesController extends Controller
 
         $this->roles->update($role, $validated, array_values(array_unique($abilityNames)));
 
-        return redirect()->route('roles.index')->with('success', 'Rôle modifié avec succès.');
+        return redirect()->route('roles.index')->with('success', __('ui.flash.role_updated'));
     }
 }

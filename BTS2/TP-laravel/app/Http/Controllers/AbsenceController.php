@@ -71,8 +71,8 @@ class AbsenceController extends Controller
 
                     if (! $user || $user->sexe !== $requiredSexe) {
                         $fail($value === 'paternite'
-                            ? 'Le congé paternité est réservé aux utilisateurs enregistrés comme hommes.'
-                            : 'Le congé maternité est réservé aux utilisatrices enregistrées comme femmes.');
+                            ? __('ui.validation.paternity_for_men')
+                            : __('ui.validation.maternity_for_women'));
                     }
                 },
             ],
@@ -113,7 +113,7 @@ class AbsenceController extends Controller
                             }
 
                             if ($paidDays > 25) {
-                                $fail('La limite de 25 jours de congés payés par an pour cet utilisateur serait dépassée.');
+                                $fail(__('ui.validation.paid_leave_limit'));
 
                                 return;
                             }
@@ -123,7 +123,7 @@ class AbsenceController extends Controller
                     $overlap = $this->absences->hasOverlap((int) $userId, $dateDebut, $value);
 
                     if ($overlap) {
-                        $fail('Cette période chevauche déjà une absence de cet utilisateur.');
+                        $fail(__('ui.validation.absence_overlap'));
                     }
                 },
             ],
@@ -133,7 +133,7 @@ class AbsenceController extends Controller
         $absence = $this->absences->create($validated);
 
         return redirect()->route('user.show', $absence->user_id)
-            ->with('success', 'Absence créée avec succès.');
+            ->with('success', __('ui.flash.absence_created'));
     }
 
     /**
@@ -182,7 +182,7 @@ class AbsenceController extends Controller
         $this->absences->update($absence, $validated);
 
         return redirect()->route('absence.show', $absence)
-            ->with('success', 'Absence modifiée avec succès.');
+            ->with('success', __('ui.flash.absence_updated'));
     }
 
     /**
@@ -195,6 +195,6 @@ class AbsenceController extends Controller
         $this->absences->delete($absence);
 
         return redirect()->route('user.show', $userId)
-            ->with('success', 'Absence supprimée avec succès.');
+            ->with('success', __('ui.flash.absence_deleted'));
     }
 }

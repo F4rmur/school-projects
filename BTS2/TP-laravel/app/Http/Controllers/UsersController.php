@@ -64,7 +64,7 @@ class UsersController extends Controller
         $this->roles->syncForUser($user->getKey(), $role);
 
         return redirect()->route('user.show', $user)
-            ->with('success', 'Utilisateur créé avec succès.');
+            ->with('success', __('ui.flash.user_created'));
     }
 
     /**
@@ -128,7 +128,7 @@ class UsersController extends Controller
         $this->roles->syncForUser($idUser->getKey(), $role);
 
         return redirect()->route('user.show', $idUser)
-            ->with('success', 'Utilisateur modifié avec succès.');
+            ->with('success', __('ui.flash.user_updated'));
     }
 
     /**

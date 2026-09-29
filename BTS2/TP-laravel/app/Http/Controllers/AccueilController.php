@@ -19,11 +19,11 @@ class AccueilController extends Controller
 
     public function page($page = null): string
     {
-        return "page $page";
+        return __('ui.page', ['page' => $page]);
     }
 
     public function title(?string $title = null): string
     {
-        return $title ?? $this->title;
+        return $title ?? __('ui.brand');
     }
 }

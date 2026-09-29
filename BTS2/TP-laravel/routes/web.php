@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\ChaiseController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\MathematiqueController;
 use App\Http\Controllers\MotifController;
 use App\Http\Controllers\RolesController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AccueilController::class, 'index'])->name(name: 'accueil');
+Route::post('/language', [LanguageController::class, 'update'])->name('language.update');
 
 Route::middleware('auth')->group(function () {
     Route::redirect('/home', '/user');

@@ -1,11 +1,11 @@
-<x-layouts.app :title="($role ? 'Modifier' : 'Créer').' un rôle | Suivi'">
-    <a class="back-link" href="{{ route('roles.index') }}">&larr; Tous les rôles</a>
+<x-layouts.app :title="($role ? __('ui.roles.edit') : __('ui.roles.create')).' | '.__('ui.brand')">
+    <a class="back-link" href="{{ route('roles.index') }}">&larr; {{ __('ui.roles.all') }}</a>
 
     <div class="page-heading">
         <div>
-            <p class="eyebrow">Accès</p>
-            <h1>{{ $role ? 'Modifier un rôle' : 'Créer un rôle' }}</h1>
-            <p class="intro">Choisissez les autorisations associées à ce rôle.</p>
+            <p class="eyebrow">{{ __('ui.roles.access') }}</p>
+            <h1>{{ $role ? __('ui.roles.edit') : __('ui.roles.create') }}</h1>
+            <p class="intro">{{ __('ui.roles.create_intro') }}</p>
         </div>
     </div>
 
@@ -16,24 +16,24 @@
         @endif
 
         <div class="form-field">
-            <label for="title">Nom affiché</label>
+            <label for="title">{{ __('ui.roles.display_name') }}</label>
             <input id="title" name="title" type="text" value="{{ old('title', $role?->title) }}" required autofocus>
             @error('title') <small class="form-error">{{ $message }}</small> @enderror
         </div>
 
         <div class="form-field">
-            <label for="name">Identifiant</label>
+            <label for="name">{{ __('ui.roles.identifier') }}</label>
             <input id="name" name="name" type="text" value="{{ old('name', $role?->name) }}" pattern="[A-Za-z0-9_-]+" required @readonly($role?->name === 'admin')>
             @error('name') <small class="form-error">{{ $message }}</small> @enderror
         </div>
 
         <fieldset class="form-field">
-            <legend>Autorisations</legend>
+            <legend>{{ __('ui.roles.abilities') }}</legend>
             @php($selectedAbilities = old('abilities', $roleAbilities))
             @foreach ($abilities as $ability)
                 <label>
                     <input type="checkbox" name="abilities[]" value="{{ $ability->name }}" @checked(in_array($ability->name, $selectedAbilities, true) || ($role?->name === 'admin' && $ability->name === 'manage-roles')) @disabled($role?->name === 'admin' && $ability->name === 'manage-roles')>
-                    {{ $ability->title ?? \Illuminate\Support\Str::headline($ability->name) }}
+                    {{ trans()->has('ui.roles.ability_names.'.$ability->name) ? __('ui.roles.ability_names.'.$ability->name) : ($ability->title ?? \Illuminate\Support\Str::headline($ability->name)) }}
                     <small>{{ $ability->name }}</small>
                 </label>
                 @if ($role?->name === 'admin' && $ability->name === 'manage-roles')
@@ -45,8 +45,8 @@
         </fieldset>
 
         <div class="form-actions">
-            <a class="back-link" href="{{ route('roles.index') }}">Annuler</a>
-            <button class="button-link" type="submit">{{ $role ? 'Enregistrer' : 'Créer le rôle' }}</button>
+            <a class="back-link" href="{{ route('roles.index') }}">{{ __('ui.common.cancel') }}</a>
+            <button class="button-link" type="submit">{{ $role ? __('ui.common.save') : __('ui.roles.create') }}</button>
         </div>
     </form>
 </x-layouts.app>
