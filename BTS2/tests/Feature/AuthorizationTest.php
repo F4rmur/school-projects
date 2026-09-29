@@ -34,10 +34,56 @@ class AuthorizationTest extends TestCase
                 'email' => 'alice@example.test',
                 'password' => 'password',
                 'password_confirmation' => 'password',
+                'role' => 'utilisateur',
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('users', ['email' => 'alice@example.test']);
+        $this->assertTrue(User::query()->where('email', 'alice@example.test')->firstOrFail()->isA('utilisateur'));
+    }
+
+    public function test_admin_can_change_a_users_details_and_role(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+        $user = User::factory()->create();
+        $user->assign('utilisateur');
+
+        $this->actingAs($admin)
+            ->get(route('user.edit', $user->getKey()))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->put(route('user.update', $user->getKey()), [
+                'nom' => 'Modifie',
+                'prenom' => 'Alice',
+                'sexe' => 'femme',
+                'email' => $user->email,
+                'password' => '',
+                'password_confirmation' => '',
+                'role' => 'admin',
+            ])
+            ->assertRedirect(route('user.show', $user->getKey()));
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->getKey(),
+            'nom' => 'Modifie',
+        ]);
+        $this->assertTrue($user->fresh()->isA('admin'));
+    }
+
+    public function test_non_admin_cannot_edit_a_user(): void
+    {
+        $user = User::factory()->create();
+        $target = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('user.edit', $target->getKey()))
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->put(route('user.update', $target->getKey()), [])
+            ->assertForbidden();
     }
 
     public function test_non_admin_can_update_only_their_own_absence(): void

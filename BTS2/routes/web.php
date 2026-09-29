@@ -5,6 +5,7 @@ use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\ChaiseController;
 use App\Http\Controllers\MathematiqueController;
 use App\Http\Controllers\MotifController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,11 @@ Route::middleware('auth')->group(function () {
         ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'])
         ->parameters(['absence' => 'numeroAbsence']);
     Route::resource('user', UsersController::class)
-        ->only(['index', 'create', 'store', 'show'])
+        ->only(['index', 'create', 'store', 'show', 'edit', 'update'])
         ->parameters(['user' => 'idUser']);
+
+    Route::middleware('can:manage-roles')->group(function () {
+        Route::resource('roles', RolesController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update']);
+    });
 });

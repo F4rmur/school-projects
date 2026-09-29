@@ -7,6 +7,9 @@
             <p class="intro">{{ $user->email }}</p>
         </div>
         <div class="detail-actions">
+            @can('update', $user)
+                <a class="button-link" href="{{ route('user.edit', $user) }}">Modifier l'utilisateur</a>
+            @endcan
             @can('create', \App\Models\absence::class)
                 @if (auth()->user()->can('manage-all-absences') || auth()->id() === $user->id)
                     <a class="button-link" href="{{ route('absence.create', ['user_id' => $user->id]) }}">Ajouter une absence</a>

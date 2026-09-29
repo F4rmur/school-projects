@@ -13,6 +13,9 @@
             <a class="{{ request()->routeIs('absence.*') ? 'active' : '' }}" href="{{ route('absence.index') }}">Absences</a>
             <a class="{{ request()->routeIs('user.*') ? 'active' : '' }}" href="{{ route('user.index') }}">Utilisateurs</a>
             @auth
+                @can('manage-roles')
+                    <a class="{{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">Rôles</a>
+                @endcan
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="nav-button" type="submit">Se déconnecter</button>

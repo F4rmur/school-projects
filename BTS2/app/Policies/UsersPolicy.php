@@ -36,7 +36,7 @@ class UsersPolicy
      */
     public function update(User $user, users $users): bool
     {
-        return false;
+        return $user->can('manage-users');
     }
 
     /**
