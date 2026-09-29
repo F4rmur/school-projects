@@ -12,9 +12,9 @@ class AuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_non_admin_cannot_create_a_user(): void
+    public function test_user_without_manage_users_ability_cannot_create_a_user(): void
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create();
 
         $this->actingAs($user)
             ->get(route('user.create'))
@@ -23,7 +23,8 @@ class AuthorizationTest extends TestCase
 
     public function test_admin_can_create_a_user(): void
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create();
+        $admin->assign('admin');
 
         $this->actingAs($admin)
             ->post(route('user.store'), [
@@ -41,8 +42,8 @@ class AuthorizationTest extends TestCase
 
     public function test_non_admin_can_update_only_their_own_absence(): void
     {
-        $owner = User::factory()->create(['is_admin' => false]);
-        $otherUser = User::factory()->create(['is_admin' => false]);
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
         $motif = Motif::factory()->create();
         $absence = absence::factory()->create([
             'user_id' => $otherUser->id,
@@ -75,6 +76,32 @@ class AuthorizationTest extends TestCase
         $this->assertDatabaseHas('absences', [
             'id' => $ownedAbsence->id,
             'date_debut' => '2026-09-12',
+        ]);
+    }
+
+    public function test_admin_can_update_another_users_absence(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+        $otherUser = User::factory()->create();
+        $motif = Motif::factory()->create();
+        $absence = absence::factory()->create([
+            'user_id' => $otherUser->id,
+            'motif_id' => $motif->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('absence.update', $absence), [
+                'user_id' => $otherUser->id,
+                'motif_id' => $motif->id,
+                'date_debut' => '2026-09-14',
+                'date_fin' => '2026-09-15',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('absences', [
+            'id' => $absence->id,
+            'date_debut' => '2026-09-14',
         ]);
     }
 }

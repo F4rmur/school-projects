@@ -15,12 +15,12 @@
 
         <div class="form-field">
             <label for="user_id">Utilisateur</label>
-            <select id="user_id" name="user_id" required @disabled(! auth()->user()->isAdmin())>
+            <select id="user_id" name="user_id" required @disabled(! auth()->user()->can('manage-all-absences'))>
                 @foreach ($users as $user)
                     <option value="{{ $user->id }}" @selected((string) old('user_id', $absence->user_id) === (string) $user->id)>{{ trim($user->prenom.' '.$user->nom) }}</option>
                 @endforeach
             </select>
-            @if (! auth()->user()->isAdmin())
+            @if (! auth()->user()->can('manage-all-absences'))
                 <input type="hidden" name="user_id" value="{{ $absence->user_id }}">
             @endif
             @error('user_id') <small class="form-error">{{ $message }}</small> @enderror

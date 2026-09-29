@@ -28,7 +28,7 @@ class UsersPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->can('manage-users');
     }
 
     /**

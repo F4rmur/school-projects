@@ -32,7 +32,7 @@ class AbsenceController extends Controller
     {
         Gate::authorize('create', absence::class);
 
-        $users = Auth::user()->is_admin
+        $users = Gate::allows('manage-all-absences')
             ? users::orderBy('nom')->get()
             : users::whereKey(Auth::id())->get();
         $motifs = Motif::orderBy('libelle')->get();
@@ -52,7 +52,7 @@ class AbsenceController extends Controller
             'user_id' => [
                 'required',
                 'exists:users,id',
-                Rule::when(! Auth::user()->is_admin, Rule::in([Auth::id()])),
+                Rule::when(! Gate::allows('manage-all-absences'), Rule::in([Auth::id()])),
             ],
             'motif_id' => ['required', 'exists:motifs,id'],
             'type_conge' => [
@@ -160,7 +160,7 @@ class AbsenceController extends Controller
     {
         Gate::authorize('update', $absence);
 
-        $users = Auth::user()->is_admin
+        $users = Gate::allows('manage-all-absences')
             ? users::orderBy('nom')->get()
             : users::whereKey(Auth::id())->get();
         $motifs = Motif::orderBy('libelle')->get();
@@ -179,7 +179,7 @@ class AbsenceController extends Controller
             'user_id' => [
                 'required',
                 'exists:users,id',
-                Rule::when(! Auth::user()->is_admin, Rule::in([Auth::id()])),
+                Rule::when(! Gate::allows('manage-all-absences'), Rule::in([Auth::id()])),
             ],
             'motif_id' => ['required', 'exists:motifs,id'],
             'type_conge' => ['nullable', 'in:conges_payes,paternite,maternite'],

@@ -8,7 +8,7 @@
         </div>
         <div class="detail-actions">
             @can('create', \App\Models\absence::class)
-                @if (auth()->user()->isAdmin() || auth()->id() === $user->id)
+                @if (auth()->user()->can('manage-all-absences') || auth()->id() === $user->id)
                     <a class="button-link" href="{{ route('absence.create', ['user_id' => $user->id]) }}">Ajouter une absence</a>
                 @endif
             @endcan

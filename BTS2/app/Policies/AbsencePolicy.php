@@ -36,7 +36,7 @@ class AbsencePolicy
      */
     public function update(User $user, absence $absence): bool
     {
-        return $user->isAdmin() || $user->getKey() === $absence->user_id;
+        return $user->can('manage-all-absences') || $user->getKey() === $absence->user_id;
     }
 
     /**
@@ -44,7 +44,7 @@ class AbsencePolicy
      */
     public function delete(User $user, absence $absence): bool
     {
-        return $user->isAdmin() || $user->getKey() === $absence->user_id;
+        return $user->can('manage-all-absences') || $user->getKey() === $absence->user_id;
     }
 
     /**

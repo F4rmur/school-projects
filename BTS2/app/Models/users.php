@@ -12,14 +12,7 @@ class users extends Model
     /** @use HasFactory<UsersFactory> */
     use HasFactory;
 
-    protected $fillable = ['nom', 'prenom', 'sexe', 'email', 'password', 'is_admin'];
-
-    protected function casts(): array
-    {
-        return [
-            'is_admin' => 'boolean',
-        ];
-    }
+    protected $fillable = ['nom', 'prenom', 'sexe', 'email', 'password'];
 
     public function absences(): HasMany
     {
