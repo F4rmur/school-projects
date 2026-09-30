@@ -1,13 +1,13 @@
 <x-layouts.app :title="__('ui.absences.edit_title')">
-    <a class="back-link" href="{{ route('absence.show', $absence) }}">&larr; {{ __('ui.common.back') }}</a>
+    <x-back-link :href="route('absence.show', $absence)">
+        &larr; {{ __('ui.common.back') }}
+    </x-back-link>
 
-    <div class="page-heading">
-        <div>
-            <p class="eyebrow">{{ __('ui.absences.planning') }}</p>
-            <h1>{{ __('ui.absences.edit_title') }}</h1>
-            <p class="intro">{{ __('ui.absences.edit_intro') }}</p>
-        </div>
-    </div>
+    <x-page-header
+        :eyebrow="__('ui.absences.planning')"
+        :title="__('ui.absences.edit_title')"
+        :intro="__('ui.absences.edit_intro')"
+    />
 
     <form class="panel form-panel" method="POST" action="{{ route('absence.update', $absence) }}">
         @csrf
@@ -28,9 +28,6 @@
 
         @include('absences.partials.fields', ['absence' => $absence, 'motifs' => $motifs])
 
-        <div class="form-actions">
-            <a class="back-link" href="{{ route('absence.show', $absence) }}">{{ __('ui.common.cancel') }}</a>
-            <button class="button-link" type="submit">{{ __('ui.common.save') }}</button>
-        </div>
+        <x-form-actions :cancel-href="route('absence.show', $absence)" :submit-label="__('ui.common.save')" />
     </form>
 </x-layouts.app>

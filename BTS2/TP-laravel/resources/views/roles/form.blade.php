@@ -1,13 +1,13 @@
 <x-layouts.app :title="($role ? __('ui.roles.edit') : __('ui.roles.create')).' | '.__('ui.brand')">
-    <a class="back-link" href="{{ route('roles.index') }}">&larr; {{ __('ui.roles.all') }}</a>
+    <x-back-link :href="route('roles.index')">
+        &larr; {{ __('ui.roles.all') }}
+    </x-back-link>
 
-    <div class="page-heading">
-        <div>
-            <p class="eyebrow">{{ __('ui.roles.access') }}</p>
-            <h1>{{ $role ? __('ui.roles.edit') : __('ui.roles.create') }}</h1>
-            <p class="intro">{{ __('ui.roles.create_intro') }}</p>
-        </div>
-    </div>
+    <x-page-header
+        :eyebrow="__('ui.roles.access')"
+        :title="$role ? __('ui.roles.edit') : __('ui.roles.create')"
+        :intro="__('ui.roles.create_intro')"
+    />
 
     <form class="panel form-panel" method="POST" action="{{ $role ? route('roles.update', $role) : route('roles.store') }}">
         @csrf
@@ -15,17 +15,13 @@
             @method('PUT')
         @endif
 
-        <div class="form-field">
-            <label for="title">{{ __('ui.roles.display_name') }}</label>
+        <x-form-field for="title" :label="__('ui.roles.display_name')" :error="$errors->first('title')">
             <input id="title" name="title" type="text" value="{{ old('title', $role?->title) }}" required autofocus>
-            @error('title') <small class="form-error">{{ $message }}</small> @enderror
-        </div>
+        </x-form-field>
 
-        <div class="form-field">
-            <label for="name">{{ __('ui.roles.identifier') }}</label>
+        <x-form-field for="name" :label="__('ui.roles.identifier')" :error="$errors->first('name')">
             <input id="name" name="name" type="text" value="{{ old('name', $role?->name) }}" pattern="[A-Za-z0-9_-]+" required @readonly($role?->name === 'admin')>
-            @error('name') <small class="form-error">{{ $message }}</small> @enderror
-        </div>
+        </x-form-field>
 
         <fieldset class="form-field">
             <legend>{{ __('ui.roles.abilities') }}</legend>
@@ -44,9 +40,9 @@
             @error('abilities.*') <small class="form-error">{{ $message }}</small> @enderror
         </fieldset>
 
-        <div class="form-actions">
-            <a class="back-link" href="{{ route('roles.index') }}">{{ __('ui.common.cancel') }}</a>
-            <button class="button-link" type="submit">{{ $role ? __('ui.common.save') : __('ui.roles.create') }}</button>
-        </div>
+        <x-form-actions
+            :cancel-href="route('roles.index')"
+            :submit-label="$role ? __('ui.common.save') : __('ui.roles.create')"
+        />
     </form>
 </x-layouts.app>

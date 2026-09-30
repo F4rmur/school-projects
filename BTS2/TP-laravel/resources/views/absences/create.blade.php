@@ -1,13 +1,13 @@
 <x-layouts.app :title="__('ui.absences.create_title')">
-    <a class="back-link" href="{{ $selectedUserId ? route('user.show', $selectedUserId) : route('absence.index') }}">&larr; {{ __('ui.common.back') }}</a>
+    <x-back-link :href="$selectedUserId ? route('user.show', $selectedUserId) : route('absence.index')">
+        &larr; {{ __('ui.common.back') }}
+    </x-back-link>
 
-    <div class="page-heading">
-        <div>
-            <p class="eyebrow">{{ __('ui.absences.planning') }}</p>
-            <h1>{{ __('ui.absences.create_title') }}</h1>
-            <p class="intro">{{ __('ui.absences.create_intro') }}</p>
-        </div>
-    </div>
+    <x-page-header
+        :eyebrow="__('ui.absences.planning')"
+        :title="__('ui.absences.create_title')"
+        :intro="__('ui.absences.create_intro')"
+    />
 
     <form class="panel form-panel" method="POST" action="{{ route('absence.store') }}">
         @csrf
@@ -25,9 +25,9 @@
 
         @include('absences.partials.fields', ['absence' => null, 'motifs' => $motifs])
 
-        <div class="form-actions">
-            <a class="back-link" href="{{ $selectedUserId ? route('user.show', $selectedUserId) : route('absence.index') }}">{{ __('ui.common.cancel') }}</a>
-            <button class="button-link" type="submit">{{ __('ui.absences.create_action') }}</button>
-        </div>
+        <x-form-actions
+            :cancel-href="$selectedUserId ? route('user.show', $selectedUserId) : route('absence.index')"
+            :submit-label="__('ui.absences.create_action')"
+        />
     </form>
 </x-layouts.app>

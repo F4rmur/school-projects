@@ -1,13 +1,13 @@
 <x-layouts.app :title="__('ui.users.create_title')">
-    <a class="back-link" href="{{ route('user.index') }}">&larr; {{ __('ui.users.all') }}</a>
+    <x-back-link :href="route('user.index')">
+        &larr; {{ __('ui.users.all') }}
+    </x-back-link>
 
-    <div class="page-heading">
-        <div>
-            <p class="eyebrow">{{ __('ui.users.team') }}</p>
-            <h1>{{ __('ui.users.create_title') }}</h1>
-            <p class="intro">{{ __('ui.users.create_intro') }}</p>
-        </div>
-    </div>
+    <x-page-header
+        :eyebrow="__('ui.users.team')"
+        :title="__('ui.users.create_title')"
+        :intro="__('ui.users.create_intro')"
+    />
 
     <form class="panel form-panel" method="POST" action="{{ route('user.store') }}">
         @csrf
@@ -25,9 +25,6 @@
             <input id="password_confirmation" name="password_confirmation" type="password" required>
         </div>
 
-        <div class="form-actions">
-            <a class="back-link" href="{{ route('user.index') }}">{{ __('ui.common.cancel') }}</a>
-            <button class="button-link" type="submit">{{ __('ui.users.create_action') }}</button>
-        </div>
+        <x-form-actions :cancel-href="route('user.index')" :submit-label="__('ui.users.create_action')" />
     </form>
 </x-layouts.app>
