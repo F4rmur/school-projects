@@ -17,40 +17,26 @@
             </style>
         @endif
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
-            @if (\Illuminate\Support\Facades\Route::has('login'))
-                <nav class="flex items-center justify-end gap-4">
-                    @include('components.language-switcher')
-                    @auth
-                        <a
-                            href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
-                        >
-                            {{ __('ui.home.dashboard') }}
-                        </a>
-                    @else
-                        <a
-                            href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
-                        >
-                            {{ __('ui.auth.login') }}
-                        </a>
-
-                        @if (\Illuminate\Support\Facades\Route::has('register'))
-                            <a
-                                href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
-                                {{ __('ui.auth.register') }}
-                            </a>
-                        @endif
-                    @endauth
-                </nav>
-            @endif
+    <body>
+        <header class="site-header">
+            <a class="brand" href="{{ route('accueil') }}">{{ __('ui.brand') }}<span>.</span></a>
+            <nav class="site-nav" aria-label="{{ __('ui.navigation.main') }}">
+                @include('components.language-switcher')
+            </nav>
         </header>
 
-        @if (\Illuminate\Support\Facades\Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
-        @endif
+        <main class="welcome-main">
+            <section class="welcome-content">
+                <h1>{{ __('ui.auth.secure_area') }}</h1>
+                <p class="welcome-copy">{{ __('ui.auth.login_intro') }}</p>
+                <div class="welcome-actions">
+                    @auth
+                        <a class="button-link" href="{{ route('user.index') }}">{{ __('ui.home.dashboard') }}</a>
+                    @else
+                        <a class="button-link" href="{{ route('login') }}">{{ __('ui.auth.login') }}</a>
+                    @endauth
+                </div>
+            </section>
+        </main>
     </body>
 </html>

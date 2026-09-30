@@ -16,4 +16,11 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_guest_is_redirected_to_login_when_opening_protected_urls(): void
+    {
+        foreach ([route('absence.index'), route('user.index'), route('roles.index')] as $url) {
+            $this->get($url)->assertRedirect(route('login'));
+        }
+    }
 }

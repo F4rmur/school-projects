@@ -53,6 +53,6 @@ class EloquentAbsenceRepository implements AbsenceRepository
 
     public function loadRelations(AbsenceRecord $absence): AbsenceRecord
     {
-        return $absence->load(['user', 'motif']);
+        return $absence->load(['user', 'motif', 'approvedBy']);
     }
 }

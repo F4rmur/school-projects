@@ -14,6 +14,10 @@ Route::middleware('auth')->group(function () {
     Route::redirect('/home', '/user');
     Route::redirect('/dashboard', '/user');
 
+    Route::post('absence/{numeroAbsence}/approve', [AbsenceController::class, 'approve'])
+        ->middleware('can:manage-all-absences')
+        ->name('absence.approve');
+
     Route::resource('absence', AbsenceController::class)
         ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'])
         ->parameters(['absence' => 'numeroAbsence']);

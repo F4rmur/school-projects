@@ -26,19 +26,38 @@ class LanguageTest extends TestCase
         config(['session.driver' => 'array']);
 
         foreach ([
-            'fr' => ['Se connecter', 'Créer un compte'],
-            'en' => ['Sign in', 'Create account'],
-            'es' => ['Iniciar sesión', 'Crear una cuenta'],
-        ] as $locale => [$loginLabel, $registerLabel]) {
+            'fr' => 'Se connecter',
+            'en' => 'Sign in',
+            'es' => 'Iniciar sesión',
+        ] as $locale => $loginLabel) {
             $this->withSession(['locale' => $locale])
                 ->get(route('login'))
                 ->assertSee($loginLabel)
                 ->assertSee('onchange="this.form.requestSubmit()"', false);
-
-            $this->withSession(['locale' => $locale])
-                ->get(route('register'))
-                ->assertSee($registerLabel);
         }
+    }
+
+    public function test_homepage_renders_in_each_supported_language(): void
+    {
+        config(['session.driver' => 'array']);
+
+        foreach ([
+            'fr' => 'Accédez au suivi des absences.',
+            'en' => 'Access absence tracking.',
+            'es' => 'Accede al control de ausencias.',
+        ] as $locale => $intro) {
+            $this->withSession(['locale' => $locale])
+                ->get(route('accueil'))
+                ->assertSee($intro)
+                ->assertSee(route('login'), false)
+                ->assertDontSee('/register', false);
+        }
+    }
+
+    public function test_registration_routes_return_not_found(): void
+    {
+        $this->get('/register')->assertNotFound();
+        $this->post('/register', [])->assertNotFound();
     }
 
     public function test_selected_language_is_saved_and_used_by_authentication_views(): void
@@ -61,16 +80,5 @@ class LanguageTest extends TestCase
             ->post(route('language.update'), ['locale' => 'de'])
             ->assertRedirect(route('login'))
             ->assertSessionHasErrors('locale');
-    }
-
-    public function test_validation_messages_use_the_selected_language(): void
-    {
-        config(['session.driver' => 'array']);
-
-        $this->withSession(['locale' => 'es'])
-            ->post(route('register'), [])
-            ->assertRedirect()
-            ->assertSessionHasErrors(['nom', 'prenom', 'email', 'password'])
-            ->assertSessionHas('errors', fn ($errors): bool => $errors->getBag('default')->first('nom') === 'El campo apellidos es obligatorio.');
     }
 }

@@ -2,15 +2,104 @@
 
 namespace Tests\Feature;
 
+use App\Mail\AbsenceRequestApproved;
+use App\Mail\AbsenceRequestCreated;
 use App\Models\absence as AbsenceRecord;
 use App\Models\Motif;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AuthorizationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_new_absence_stays_pending_and_notifies_requester_and_managers(): void
+    {
+        Mail::fake();
+
+        $creator = User::factory()->create();
+        $creator->assign('admin');
+        $target = User::factory()->create();
+        $manager = User::factory()->create();
+        $manager->assign('admin');
+        $otherUser = User::factory()->create();
+        $motif = Motif::factory()->create();
+
+        $this->actingAs($creator)
+            ->post(route('absence.store'), [
+                'user_id' => $target->getKey(),
+                'motif_id' => $motif->getKey(),
+                'date_debut' => '2026-10-05',
+                'date_fin' => '2026-10-05',
+                'status' => AbsenceRecord::STATUS_APPROVED,
+                'approved_by' => $creator->getKey(),
+                'approved_at' => '2026-09-30 12:00:00',
+            ])
+            ->assertRedirect(route('user.show', $target));
+
+        $this->assertDatabaseHas('absences', [
+            'user_id' => $target->getKey(),
+            'motif_id' => $motif->getKey(),
+            'status' => AbsenceRecord::STATUS_PENDING,
+            'approved_by' => null,
+            'approved_at' => null,
+        ]);
+
+        Mail::assertSentTimes(AbsenceRequestCreated::class, 3);
+        Mail::assertSent(AbsenceRequestCreated::class, [
+            $target->email,
+            $creator->email,
+            $manager->email,
+        ]);
+        Mail::assertNotSent(AbsenceRequestCreated::class, $otherUser->email);
+    }
+
+    public function test_user_without_manage_all_absences_cannot_approve_an_absence(): void
+    {
+        $user = User::factory()->create();
+        $absence = AbsenceRecord::factory()->create([
+            'status' => AbsenceRecord::STATUS_PENDING,
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('absence.approve', $absence))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('absences', [
+            'id' => $absence->getKey(),
+            'status' => AbsenceRecord::STATUS_PENDING,
+            'approved_by' => null,
+        ]);
+    }
+
+    public function test_user_with_manage_all_absences_can_approve_an_absence(): void
+    {
+        Mail::fake();
+
+        $manager = User::factory()->create();
+        $manager->assign('admin');
+        $absence = AbsenceRecord::factory()->create([
+            'status' => AbsenceRecord::STATUS_PENDING,
+        ]);
+        $target = User::query()->findOrFail($absence->user_id);
+
+        $this->actingAs($manager)
+            ->post(route('absence.approve', $absence))
+            ->assertRedirect(route('absence.show', $absence));
+
+        $this->assertDatabaseHas('absences', [
+            'id' => $absence->getKey(),
+            'status' => AbsenceRecord::STATUS_APPROVED,
+            'approved_by' => $manager->getKey(),
+        ]);
+        $this->assertNotNull($absence->fresh()->approved_at);
+
+        Mail::assertSentTimes(AbsenceRequestApproved::class, 1);
+        Mail::assertSent(AbsenceRequestApproved::class, $target->email);
+        Mail::assertNotSent(AbsenceRequestApproved::class, $manager->email);
+    }
 
     public function test_user_without_manage_users_ability_cannot_create_a_user(): void
     {
@@ -158,9 +247,13 @@ class AuthorizationTest extends TestCase
             ])
             ->assertForbidden();
 
+        $approver = User::factory()->create();
         $ownedAbsence = AbsenceRecord::factory()->create([
             'user_id' => $owner->id,
             'motif_id' => $motif->id,
+            'status' => AbsenceRecord::STATUS_APPROVED,
+            'approved_by' => $approver->getKey(),
+            'approved_at' => now(),
         ]);
 
         $this->actingAs($owner)
@@ -175,6 +268,9 @@ class AuthorizationTest extends TestCase
         $this->assertDatabaseHas('absences', [
             'id' => $ownedAbsence->id,
             'date_debut' => '2026-09-12',
+            'status' => AbsenceRecord::STATUS_PENDING,
+            'approved_by' => null,
+            'approved_at' => null,
         ]);
     }
 

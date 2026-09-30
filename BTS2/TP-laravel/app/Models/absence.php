@@ -9,10 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class absence extends Model
 {
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_APPROVED = 'approved';
+
     /** @use HasFactory<AbsenceFactory> */
     use HasFactory;
 
-    protected $fillable = ['user_id', 'motif_id', 'conges_payes', 'type_conge', 'date_debut', 'date_fin'];
+    protected $fillable = ['user_id', 'motif_id', 'conges_payes', 'type_conge', 'date_debut', 'date_fin', 'status', 'approved_by', 'approved_at'];
+
+    protected $attributes = [
+        'status' => self::STATUS_APPROVED,
+    ];
 
     protected function casts(): array
     {
@@ -20,6 +28,7 @@ class absence extends Model
             'date_debut' => 'date',
             'date_fin' => 'date',
             'conges_payes' => 'boolean',
+            'approved_at' => 'datetime',
         ];
     }
 
@@ -31,5 +40,10 @@ class absence extends Model
     public function motif(): BelongsTo
     {
         return $this->belongsTo(Motif::class, 'motif_id');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

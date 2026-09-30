@@ -15,13 +15,14 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>{{ __('ui.absences.person') }}</th><th>{{ __('ui.absences.reason') }}</th><th>{{ __('ui.common.from') }}</th><th>{{ __('ui.common.to') }}</th><th></th></tr>
+                        <tr><th>{{ __('ui.absences.person') }}</th><th>{{ __('ui.absences.reason') }}</th><th>{{ __('ui.absences.status') }}</th><th>{{ __('ui.common.from') }}</th><th>{{ __('ui.common.to') }}</th><th></th></tr>
                     </thead>
                     <tbody>
                         @foreach ($absences as $absence)
                             <tr>
                                 <td><a class="person-link" href="{{ route('user.show', $absence->user) }}">{{ $absence->user ? trim($absence->user->prenom.' '.$absence->user->nom) : __('ui.absences.deleted_user') }}</a></td>
                                 <td><span class="tag">{{ $absence->motif?->libelle ?? __('ui.absences.unspecified_reason') }}</span></td>
+                                <td><span class="tag {{ $absence->status === \App\Models\absence::STATUS_PENDING ? 'tag-pending' : 'tag-approved' }}">{{ __('ui.absences.statuses.'.$absence->status) }}</span></td>
                                 <td>{{ $absence->date_debut?->format('d/m/Y') ?? $absence->date_debut }}</td>
                                 <td>{{ $absence->date_fin?->format('d/m/Y') ?? $absence->date_fin }}</td>
                                 <td class="action-cell"><a class="text-link" href="{{ route('absence.show', $absence) }}">{{ __('ui.absences.details') }}</a></td>

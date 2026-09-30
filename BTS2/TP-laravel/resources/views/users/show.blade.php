@@ -21,7 +21,7 @@
     <section class="panel">
         <div class="section-title"><h2>{{ __('ui.users.history') }}</h2><span class="muted">{{ $user->absences->count() }} {{ __('ui.users.total') }}</span></div>
         @forelse ($user->absences->sortByDesc('date_debut') as $absence)
-            <a class="absence-row" href="{{ route('absence.show', $absence) }}"><span><strong>{{ $absence->motif?->libelle ?? __('ui.absences.unspecified_reason') }}</strong><small>{{ $absence->date_debut?->format('d/m/Y') ?? $absence->date_debut }} {{ __('ui.common.to') }} {{ $absence->date_fin?->format('d/m/Y') ?? $absence->date_fin }}</small></span><span class="text-link">{{ __('ui.common.view') }}</span></a>
+            <a class="absence-row" href="{{ route('absence.show', $absence) }}"><span><strong>{{ $absence->motif?->libelle ?? __('ui.absences.unspecified_reason') }}</strong><small>{{ $absence->date_debut?->format('d/m/Y') ?? $absence->date_debut }} {{ __('ui.common.to') }} {{ $absence->date_fin?->format('d/m/Y') ?? $absence->date_fin }}</small><span class="tag {{ $absence->status === \App\Models\absence::STATUS_PENDING ? 'tag-pending' : 'tag-approved' }}">{{ __('ui.absences.statuses.'.$absence->status) }}</span></span><span class="text-link">{{ __('ui.common.view') }}</span></a>
         @empty
             <div class="empty-state">{{ __('ui.users.empty_absences') }}</div>
         @endforelse
