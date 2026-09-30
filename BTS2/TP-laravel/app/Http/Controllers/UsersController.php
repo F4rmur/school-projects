@@ -7,6 +7,9 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\users as UserRecord;
 use App\Repositories\Contracts\RoleRepository;
 use App\Repositories\Contracts\UserRepository;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,21 +20,15 @@ class UsersController extends Controller
         private RoleRepository $roles,
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
-        $currentUserId = Gate::allows('manage-users') ? null : (int) auth()->id();
+        $currentUserId = Gate::allows('manage-users') ? null : (int) Auth::id();
         $users = $this->users->allWithAbsences($currentUserId);
 
         return view('users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
         Gate::authorize('create', UserRecord::class);
 
@@ -40,17 +37,13 @@ class UsersController extends Controller
         return view('users.create', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         $role = $validated['role'];
         unset($validated['role']);
         $validated['password'] = Hash::make($validated['password']);
-        unset($validated['password_confirmation']);
 
         $user = $this->users->create($validated);
         $this->roles->syncForUser($user->getKey(), $role);
@@ -59,10 +52,7 @@ class UsersController extends Controller
             ->with('success', __('ui.flash.user_created'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(UserRecord $idUser)
+    public function show(UserRecord $idUser): View
     {
         Gate::authorize('view', $idUser);
         $idUser->load('absences.motif');
@@ -70,10 +60,7 @@ class UsersController extends Controller
         return view('users.show', ['user' => $idUser]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(UserRecord $idUser)
+    public function edit(UserRecord $idUser): View
     {
         Gate::authorize('update', $idUser);
 
@@ -87,10 +74,7 @@ class UsersController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateUserRequest $request, UserRecord $idUser)
+    public function update(UpdateUserRequest $request, UserRecord $idUser): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -100,6 +84,7 @@ class UsersController extends Controller
         if (filled($validated['password'] ?? null)) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
+            // A blank password means the existing credential remains unchanged.
             unset($validated['password']);
         }
 
@@ -108,13 +93,5 @@ class UsersController extends Controller
 
         return redirect()->route('user.show', $idUser)
             ->with('success', __('ui.flash.user_updated'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(UserRecord $users)
-    {
-        //
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\absence;
+use App\Models\absence as AbsenceRecord;
 use App\Models\Motif;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -112,13 +112,13 @@ class AuthorizationTest extends TestCase
         $user->assign('utilisateur');
         $otherUser = User::factory()->create();
         $motif = Motif::factory()->create();
-        $ownAbsence = absence::factory()->create([
+        $ownAbsence = AbsenceRecord::factory()->create([
             'user_id' => $user->id,
             'motif_id' => $motif->id,
             'date_debut' => '2026-09-10',
             'date_fin' => '2026-09-10',
         ]);
-        $otherAbsence = absence::factory()->create([
+        $otherAbsence = AbsenceRecord::factory()->create([
             'user_id' => $otherUser->id,
             'motif_id' => $motif->id,
             'date_debut' => '2026-09-20',
@@ -144,7 +144,7 @@ class AuthorizationTest extends TestCase
         $owner = User::factory()->create();
         $otherUser = User::factory()->create();
         $motif = Motif::factory()->create();
-        $absence = absence::factory()->create([
+        $absence = AbsenceRecord::factory()->create([
             'user_id' => $otherUser->id,
             'motif_id' => $motif->id,
         ]);
@@ -158,7 +158,7 @@ class AuthorizationTest extends TestCase
             ])
             ->assertForbidden();
 
-        $ownedAbsence = absence::factory()->create([
+        $ownedAbsence = AbsenceRecord::factory()->create([
             'user_id' => $owner->id,
             'motif_id' => $motif->id,
         ]);
@@ -184,7 +184,7 @@ class AuthorizationTest extends TestCase
         $admin->assign('admin');
         $otherUser = User::factory()->create();
         $motif = Motif::factory()->create();
-        $absence = absence::factory()->create([
+        $absence = AbsenceRecord::factory()->create([
             'user_id' => $otherUser->id,
             'motif_id' => $motif->id,
         ]);
@@ -202,5 +202,27 @@ class AuthorizationTest extends TestCase
             'id' => $absence->id,
             'date_debut' => '2026-09-14',
         ]);
+    }
+
+    public function test_admin_can_edit_and_delete_an_absence(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+        $owner = User::factory()->create();
+        $motif = Motif::factory()->create();
+        $absence = AbsenceRecord::factory()->create([
+            'user_id' => $owner->id,
+            'motif_id' => $motif->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('absence.edit', $absence->getKey()))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->delete(route('absence.destroy', $absence->getKey()))
+            ->assertRedirect(route('user.show', $owner->getKey()));
+
+        $this->assertDatabaseMissing('absences', ['id' => $absence->getKey()]);
     }
 }

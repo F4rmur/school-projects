@@ -8,6 +8,9 @@ use App\Models\absence as AbsenceRecord;
 use App\Repositories\Contracts\AbsenceRepository;
 use App\Repositories\Contracts\MotifRepository;
 use App\Repositories\Contracts\UserRepository;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -20,10 +23,7 @@ class AbsenceController extends Controller
         private UserRepository $users,
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
         $currentUserId = Gate::allows('manage-all-absences') ? null : (int) Auth::id();
         $absences = $this->absences->allWithRelations($currentUserId);
@@ -31,38 +31,27 @@ class AbsenceController extends Controller
         return view('absences.index', compact('absences'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         Gate::authorize('create', AbsenceRecord::class);
 
-        $users = $this->users->forAbsenceForm(Gate::allows('manage-all-absences'), (int) Auth::id());
-        $motifs = $this->motifs->allOrderedByLibelle();
         $selectedUserId = $request->integer('user_id') ?: old('user_id');
 
-        return view('absences.create', compact('users', 'motifs', 'selectedUserId'));
+        return view('absences.create', [
+            ...$this->absenceFormOptions(),
+            'selectedUserId' => $selectedUserId,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAbsenceRequest $request)
+    public function store(StoreAbsenceRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $validated['conges_payes'] = $validated['type_conge'] === 'conges_payes';
-        $absence = $this->absences->create($validated);
+        $absence = $this->absences->create($this->withPaidLeaveFlag($request->validated()));
 
         return redirect()->route('user.show', $absence->user_id)
             ->with('success', __('ui.flash.absence_created'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(AbsenceRecord $numeroAbsence)
+    public function show(AbsenceRecord $numeroAbsence): View
     {
         Gate::authorize('view', $numeroAbsence);
         $this->absences->loadRelations($numeroAbsence);
@@ -70,43 +59,55 @@ class AbsenceController extends Controller
         return view('absences.show', ['absence' => $numeroAbsence]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AbsenceRecord $absence)
+    public function edit(AbsenceRecord $numeroAbsence): View
     {
-        Gate::authorize('update', $absence);
+        Gate::authorize('update', $numeroAbsence);
 
-        $users = $this->users->forAbsenceForm(Gate::allows('manage-all-absences'), (int) Auth::id());
-        $motifs = $this->motifs->allOrderedByLibelle();
-
-        return view('absences.edit', compact('absence', 'users', 'motifs'));
+        return view('absences.edit', [
+            'absence' => $numeroAbsence,
+            ...$this->absenceFormOptions(),
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAbsenceRequest $request, AbsenceRecord $numeroAbsence)
+    public function update(UpdateAbsenceRequest $request, AbsenceRecord $numeroAbsence): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $validated['conges_payes'] = $validated['type_conge'] === 'conges_payes';
-        $this->absences->update($numeroAbsence, $validated);
+        $this->absences->update($numeroAbsence, $this->withPaidLeaveFlag($request->validated()));
 
         return redirect()->route('absence.show', $numeroAbsence)
             ->with('success', __('ui.flash.absence_updated'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AbsenceRecord $absence)
+    public function destroy(AbsenceRecord $numeroAbsence): RedirectResponse
     {
-        Gate::authorize('delete', $absence);
-        $userId = $absence->user_id;
-        $this->absences->delete($absence);
+        Gate::authorize('delete', $numeroAbsence);
+        $userId = $numeroAbsence->user_id;
+        $this->absences->delete($numeroAbsence);
 
         return redirect()->route('user.show', $userId)
             ->with('success', __('ui.flash.absence_deleted'));
+    }
+
+    /**
+     * @return array{users: Collection, motifs: Collection}
+     */
+    private function absenceFormOptions(): array
+    {
+        return [
+            'users' => $this->users->forAbsenceForm(Gate::allows('manage-all-absences'), (int) Auth::id()),
+            'motifs' => $this->motifs->allOrderedByLibelle(),
+        ];
+    }
+
+    /**
+     * Keep the legacy paid-leave flag synchronized with the selected leave type.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    private function withPaidLeaveFlag(array $attributes): array
+    {
+        $attributes['conges_payes'] = ($attributes['type_conge'] ?? null) === 'conges_payes';
+
+        return $attributes;
     }
 }

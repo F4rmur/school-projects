@@ -23,40 +23,7 @@
             @error('user_id') <small class="form-error">{{ $message }}</small> @enderror
         </div>
 
-        <div class="form-field">
-            <label for="motif_id">{{ __('ui.absences.reason') }}</label>
-            <select id="motif_id" name="motif_id" required>
-                <option value="">{{ __('ui.absences.select_reason') }}</option>
-                @foreach ($motifs as $motif)
-                    <option value="{{ $motif->id }}" @selected((string) old('motif_id') === (string) $motif->id)>{{ $motif->libelle }}</option>
-                @endforeach
-            </select>
-            @error('motif_id') <small class="form-error">{{ $message }}</small> @enderror
-        </div>
-
-        <div class="form-field">
-            <label for="type_conge">{{ __('ui.absences.leave_type') }}</label>
-            <select id="type_conge" name="type_conge">
-                <option value="">{{ __('ui.absences.other') }}</option>
-                <option value="conges_payes" @selected(old('type_conge') === 'conges_payes')>{{ __('ui.absences.paid_leave_limit') }}</option>
-                <option value="paternite" @selected(old('type_conge') === 'paternite')>{{ __('ui.absences.paternity_leave') }}</option>
-                <option value="maternite" @selected(old('type_conge') === 'maternite')>{{ __('ui.absences.maternity_leave') }}</option>
-            </select>
-            @error('type_conge') <small class="form-error">{{ $message }}</small> @enderror
-        </div>
-
-        <div class="form-row">
-            <div class="form-field">
-                <label for="date_debut">{{ __('ui.common.from') }}</label>
-                <input id="date_debut" name="date_debut" type="date" value="{{ old('date_debut') }}" required>
-                @error('date_debut') <small class="form-error">{{ $message }}</small> @enderror
-            </div>
-            <div class="form-field">
-                <label for="date_fin">{{ __('ui.common.to') }}</label>
-                <input id="date_fin" name="date_fin" type="date" value="{{ old('date_fin') }}" required>
-                @error('date_fin') <small class="form-error">{{ $message }}</small> @enderror
-            </div>
-        </div>
+        @include('absences.partials.fields', ['absence' => null, 'motifs' => $motifs])
 
         <div class="form-actions">
             <a class="back-link" href="{{ $selectedUserId ? route('user.show', $selectedUserId) : route('absence.index') }}">{{ __('ui.common.cancel') }}</a>
