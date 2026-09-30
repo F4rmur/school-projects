@@ -141,10 +141,6 @@ return [
             'manage-roles' => 'Manage roles',
         ],
     ],
-    'motifs' => [
-        'title' => 'Absence reasons',
-        'item' => 'Reason',
-    ],
     'flash' => [
         'absence_created' => 'Absence created successfully.',
         'absence_updated' => 'Absence updated successfully.',
@@ -161,13 +157,4 @@ return [
         'absence_overlap' => 'This period overlaps an existing absence for this user.',
         'form_errors' => 'Some fields contain errors. Review the messages below.',
     ],
-    'math' => [
-        'addition' => ':a + :b = :result',
-        'subtraction' => ':a - :b = :result',
-        'multiplication' => ':a × :b = :result',
-        'division' => ':a ÷ :b = :result',
-        'division_by_zero' => 'Division by zero is not possible.',
-    ],
-    'page' => 'Page :page',
-    'title' => 'Title: :title',
 ];

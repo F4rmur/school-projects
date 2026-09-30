@@ -141,10 +141,6 @@ return [
             'manage-roles' => 'Gérer les rôles',
         ],
     ],
-    'motifs' => [
-        'title' => 'Motifs',
-        'item' => 'Motif',
-    ],
     'flash' => [
         'absence_created' => 'Absence créée avec succès.',
         'absence_updated' => 'Absence modifiée avec succès.',
@@ -161,13 +157,4 @@ return [
         'absence_overlap' => 'Cette période chevauche déjà une absence de cet utilisateur.',
         'form_errors' => 'Certains champs contiennent des erreurs. Vérifiez les messages ci-dessous.',
     ],
-    'math' => [
-        'addition' => ':a + :b = :result',
-        'subtraction' => ':a - :b = :result',
-        'multiplication' => ':a × :b = :result',
-        'division' => ':a ÷ :b = :result',
-        'division_by_zero' => 'La division par zéro est impossible.',
-    ],
-    'page' => 'Page :page',
-    'title' => 'Titre :title',
 ];

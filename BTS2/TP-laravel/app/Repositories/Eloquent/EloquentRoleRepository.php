@@ -61,6 +61,6 @@ class EloquentRoleRepository implements RoleRepository
 
     public function userRoleName(int|string $userId): ?string
     {
-        return User::query()->findOrFail($userId)->getRoles()->first()?->name;
+        return User::query()->findOrFail($userId)->getRoles()->first();
     }
 }

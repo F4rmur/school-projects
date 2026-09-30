@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateLanguageRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class LanguageController extends Controller
 {
-    public function update(Request $request): RedirectResponse
+    public function update(UpdateLanguageRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'locale' => ['required', Rule::in(array_keys(config('app.supported_locales')))],
-        ]);
+        $validated = $request->validated();
 
         $request->session()->put('locale', $validated['locale']);
 

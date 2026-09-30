@@ -141,10 +141,6 @@ return [
             'manage-roles' => 'Gestionar roles',
         ],
     ],
-    'motifs' => [
-        'title' => 'Motivos de ausencia',
-        'item' => 'Motivo',
-    ],
     'flash' => [
         'absence_created' => 'Ausencia creada correctamente.',
         'absence_updated' => 'Ausencia actualizada correctamente.',
@@ -161,13 +157,4 @@ return [
         'absence_overlap' => 'Este período coincide con una ausencia existente de este usuario.',
         'form_errors' => 'Algunos campos contienen errores. Revisa los mensajes siguientes.',
     ],
-    'math' => [
-        'addition' => ':a + :b = :result',
-        'subtraction' => ':a - :b = :result',
-        'multiplication' => ':a × :b = :result',
-        'division' => ':a ÷ :b = :result',
-        'division_by_zero' => 'No es posible dividir entre cero.',
-    ],
-    'page' => 'Página :page',
-    'title' => 'Título: :title',
 ];

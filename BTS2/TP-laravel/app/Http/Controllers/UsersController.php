@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\users as UserRecord;
 use App\Repositories\Contracts\RoleRepository;
 use App\Repositories\Contracts\UserRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
@@ -22,7 +22,8 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = $this->users->allWithAbsences();
+        $currentUserId = Gate::allows('manage-users') ? null : (int) auth()->id();
+        $users = $this->users->allWithAbsences($currentUserId);
 
         return view('users.index', compact('users'));
     }
@@ -42,18 +43,9 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        Gate::authorize('create', UserRecord::class);
-
-        $validated = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
-            'sexe' => ['required', 'in:homme,femme'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'string', Rule::exists('roles', 'name')],
-        ]);
+        $validated = $request->validated();
 
         $role = $validated['role'];
         unset($validated['role']);
@@ -72,6 +64,7 @@ class UsersController extends Controller
      */
     public function show(UserRecord $idUser)
     {
+        Gate::authorize('view', $idUser);
         $idUser->load('absences.motif');
 
         return view('users.show', ['user' => $idUser]);
@@ -97,23 +90,9 @@ class UsersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, UserRecord $idUser)
+    public function update(UpdateUserRequest $request, UserRecord $idUser)
     {
-        Gate::authorize('update', $idUser);
-
-        $validated = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
-            'sexe' => ['required', 'in:homme,femme'],
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($idUser->getKey()),
-            ],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'string', Rule::exists('roles', 'name')],
-        ]);
+        $validated = $request->validated();
 
         $role = $validated['role'];
         unset($validated['role']);

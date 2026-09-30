@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use App\Repositories\Contracts\RoleRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 use Silber\Bouncer\Database\Role;
 
 class RolesController extends Controller
@@ -34,16 +34,9 @@ class RolesController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreRoleRequest $request): RedirectResponse
     {
-        Gate::authorize('manage-roles');
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('roles', 'name')],
-            'title' => ['required', 'string', 'max:255'],
-            'abilities' => ['sometimes', 'array'],
-            'abilities.*' => ['string', Rule::in($this->roles->availableAbilityNames())],
-        ]);
+        $validated = $request->validated();
 
         $abilityNames = $validated['abilities'] ?? [];
         unset($validated['abilities']);
@@ -64,22 +57,9 @@ class RolesController extends Controller
         ]);
     }
 
-    public function update(Request $request, Role $role): RedirectResponse
+    public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
-        Gate::authorize('manage-roles');
-
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('roles', 'name')->ignore($role->getKey()),
-                ...($role->name === 'admin' ? [Rule::in(['admin'])] : ['alpha_dash']),
-            ],
-            'title' => ['required', 'string', 'max:255'],
-            'abilities' => ['sometimes', 'array'],
-            'abilities.*' => ['string', Rule::in($this->roles->availableAbilityNames())],
-        ]);
+        $validated = $request->validated();
 
         $abilityNames = $validated['abilities'] ?? [];
         unset($validated['abilities']);

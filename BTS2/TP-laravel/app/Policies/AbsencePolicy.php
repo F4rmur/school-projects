@@ -20,7 +20,7 @@ class AbsencePolicy
      */
     public function view(User $user, absence $absence): bool
     {
-        return true;
+        return $user->can('manage-all-absences') || $user->getKey() === $absence->user_id;
     }
 
     /**

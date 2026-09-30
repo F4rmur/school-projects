@@ -86,6 +86,59 @@ class AuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_utilisateur_can_only_view_their_own_user_record(): void
+    {
+        $user = User::factory()->create(['email' => 'own@example.test']);
+        $user->assign('utilisateur');
+        $otherUser = User::factory()->create(['email' => 'other@example.test']);
+
+        $this->actingAs($user)
+            ->get(route('user.index'))
+            ->assertSee('own@example.test')
+            ->assertDontSee('other@example.test');
+
+        $this->actingAs($user)
+            ->get(route('user.show', $user->getKey()))
+            ->assertOk();
+
+        $this->actingAs($user)
+            ->get(route('user.show', $otherUser->getKey()))
+            ->assertForbidden();
+    }
+
+    public function test_utilisateur_can_only_view_their_own_absences(): void
+    {
+        $user = User::factory()->create();
+        $user->assign('utilisateur');
+        $otherUser = User::factory()->create();
+        $motif = Motif::factory()->create();
+        $ownAbsence = absence::factory()->create([
+            'user_id' => $user->id,
+            'motif_id' => $motif->id,
+            'date_debut' => '2026-09-10',
+            'date_fin' => '2026-09-10',
+        ]);
+        $otherAbsence = absence::factory()->create([
+            'user_id' => $otherUser->id,
+            'motif_id' => $motif->id,
+            'date_debut' => '2026-09-20',
+            'date_fin' => '2026-09-20',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('absence.index'))
+            ->assertSee('10/09/2026')
+            ->assertDontSee('20/09/2026');
+
+        $this->actingAs($user)
+            ->get(route('absence.show', $ownAbsence))
+            ->assertOk();
+
+        $this->actingAs($user)
+            ->get(route('absence.show', $otherAbsence))
+            ->assertForbidden();
+    }
+
     public function test_non_admin_can_update_only_their_own_absence(): void
     {
         $owner = User::factory()->create();

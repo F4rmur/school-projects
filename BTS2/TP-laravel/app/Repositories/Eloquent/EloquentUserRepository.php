@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Collection;
 
 class EloquentUserRepository implements UserRepository
 {
-    public function allWithAbsences(): Collection
+    public function allWithAbsences(?int $userId = null): Collection
     {
         return UserRecord::with('absences.motif')
             ->withCount('absences')
+            ->when($userId !== null, fn ($query) => $query->whereKey($userId))
             ->orderBy('nom')
             ->get();
     }

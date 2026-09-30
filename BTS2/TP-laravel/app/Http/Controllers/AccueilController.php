@@ -6,24 +6,8 @@ use Illuminate\View\View;
 
 class AccueilController extends Controller
 {
-    public function __construct(private string $title = 'accueil')
-    {
-        $this->title = $title;
-    }
-
-    /** @return View */
-    public function index()
+    public function index(): View
     {
         return view('welcome');
-    }
-
-    public function page($page = null): string
-    {
-        return __('ui.page', ['page' => $page]);
-    }
-
-    public function title(?string $title = null): string
-    {
-        return $title ?? __('ui.brand');
     }
 }

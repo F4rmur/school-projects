@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAbsenceRequest;
+use App\Http\Requests\UpdateAbsenceRequest;
 use App\Models\absence as AbsenceRecord;
 use App\Repositories\Contracts\AbsenceRepository;
 use App\Repositories\Contracts\MotifRepository;
 use App\Repositories\Contracts\UserRepository;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 
 class AbsenceController extends Controller
 {
@@ -25,7 +25,8 @@ class AbsenceController extends Controller
      */
     public function index()
     {
-        $absences = $this->absences->allWithRelations();
+        $currentUserId = Gate::allows('manage-all-absences') ? null : (int) Auth::id();
+        $absences = $this->absences->allWithRelations($currentUserId);
 
         return view('absences.index', compact('absences'));
     }
@@ -47,87 +48,9 @@ class AbsenceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAbsenceRequest $request)
     {
-        Gate::authorize('create', AbsenceRecord::class);
-
-        $validated = $request->validate([
-            'user_id' => [
-                'required',
-                'exists:users,id',
-                Rule::when(! Gate::allows('manage-all-absences'), Rule::in([Auth::id()])),
-            ],
-            'motif_id' => ['required', 'exists:motifs,id'],
-            'type_conge' => [
-                'nullable',
-                'in:conges_payes,paternite,maternite',
-                function (string $attribute, mixed $value, \Closure $fail) use ($request): void {
-                    if (! $value || ! in_array($value, ['paternite', 'maternite'], true)) {
-                        return;
-                    }
-
-                    $user = $this->users->find((int) $request->input('user_id'));
-                    $requiredSexe = $value === 'paternite' ? 'homme' : 'femme';
-
-                    if (! $user || $user->sexe !== $requiredSexe) {
-                        $fail($value === 'paternite'
-                            ? __('ui.validation.paternity_for_men')
-                            : __('ui.validation.maternity_for_women'));
-                    }
-                },
-            ],
-            'date_debut' => ['required', 'date'],
-            'date_fin' => [
-                'required',
-                'date',
-                'after_or_equal:date_debut',
-                function (string $attribute, mixed $value, \Closure $fail) use ($request): void {
-                    $dateDebut = $request->input('date_debut');
-                    $userId = $request->input('user_id');
-
-                    if (! $dateDebut || ! $userId || ! strtotime($dateDebut) || ! strtotime($value)) {
-                        return;
-                    }
-
-                    if ($request->input('type_conge') === 'conges_payes') {
-                        $dateDebutCarbon = Carbon::parse($dateDebut);
-                        $dateFinCarbon = Carbon::parse($value);
-                        $paidAbsences = $this->absences->paidForUser((int) $userId);
-
-                        for ($year = $dateDebutCarbon->year; $year <= $dateFinCarbon->year; $year++) {
-                            $yearStart = Carbon::create($year, 1, 1);
-                            $yearEnd = Carbon::create($year, 12, 31);
-                            $newStart = $dateDebutCarbon->greaterThan($yearStart) ? $dateDebutCarbon : $yearStart;
-                            $newEnd = $dateFinCarbon->lessThan($yearEnd) ? $dateFinCarbon : $yearEnd;
-                            $paidDays = $newStart->diffInDays($newEnd) + 1;
-
-                            foreach ($paidAbsences as $paidAbsence) {
-                                $existingStart = Carbon::parse($paidAbsence->date_debut);
-                                $existingEnd = Carbon::parse($paidAbsence->date_fin);
-                                $existingStart = $existingStart->greaterThan($yearStart) ? $existingStart : $yearStart;
-                                $existingEnd = $existingEnd->lessThan($yearEnd) ? $existingEnd : $yearEnd;
-
-                                if ($existingStart->lessThanOrEqualTo($existingEnd)) {
-                                    $paidDays += $existingStart->diffInDays($existingEnd) + 1;
-                                }
-                            }
-
-                            if ($paidDays > 25) {
-                                $fail(__('ui.validation.paid_leave_limit'));
-
-                                return;
-                            }
-                        }
-                    }
-
-                    $overlap = $this->absences->hasOverlap((int) $userId, $dateDebut, $value);
-
-                    if ($overlap) {
-                        $fail(__('ui.validation.absence_overlap'));
-                    }
-                },
-            ],
-        ]);
+        $validated = $request->validated();
 
         $validated['conges_payes'] = $validated['type_conge'] === 'conges_payes';
         $absence = $this->absences->create($validated);
@@ -141,6 +64,7 @@ class AbsenceController extends Controller
      */
     public function show(AbsenceRecord $numeroAbsence)
     {
+        Gate::authorize('view', $numeroAbsence);
         $this->absences->loadRelations($numeroAbsence);
 
         return view('absences.show', ['absence' => $numeroAbsence]);
@@ -162,26 +86,14 @@ class AbsenceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AbsenceRecord $absence)
+    public function update(UpdateAbsenceRequest $request, AbsenceRecord $numeroAbsence)
     {
-        Gate::authorize('update', $absence);
-
-        $validated = $request->validate([
-            'user_id' => [
-                'required',
-                'exists:users,id',
-                Rule::when(! Gate::allows('manage-all-absences'), Rule::in([Auth::id()])),
-            ],
-            'motif_id' => ['required', 'exists:motifs,id'],
-            'type_conge' => ['nullable', 'in:conges_payes,paternite,maternite'],
-            'date_debut' => ['required', 'date'],
-            'date_fin' => ['required', 'date', 'after_or_equal:date_debut'],
-        ]);
+        $validated = $request->validated();
 
         $validated['conges_payes'] = $validated['type_conge'] === 'conges_payes';
-        $this->absences->update($absence, $validated);
+        $this->absences->update($numeroAbsence, $validated);
 
-        return redirect()->route('absence.show', $absence)
+        return redirect()->route('absence.show', $numeroAbsence)
             ->with('success', __('ui.flash.absence_updated'));
     }
 

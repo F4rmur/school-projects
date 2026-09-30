@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface UserRepository
 {
-    public function allWithAbsences(): Collection;
+    public function allWithAbsences(?int $userId = null): Collection;
 
     public function forAbsenceForm(bool $manageAll, int $currentUserId): Collection;
 

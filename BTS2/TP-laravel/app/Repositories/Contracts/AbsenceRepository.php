@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface AbsenceRepository
 {
-    public function allWithRelations(): Collection;
+    public function allWithRelations(?int $userId = null): Collection;
 
     public function paidForUser(int|string $userId): Collection;
 

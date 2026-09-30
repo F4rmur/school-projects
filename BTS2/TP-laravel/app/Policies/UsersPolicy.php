@@ -20,7 +20,7 @@ class UsersPolicy
      */
     public function view(User $user, users $users): bool
     {
-        return false;
+        return $user->can('manage-users') || $user->getKey() === $users->getKey();
     }
 
     /**

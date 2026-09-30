@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 class EloquentAbsenceRepository implements AbsenceRepository
 {
-    public function allWithRelations(): Collection
+    public function allWithRelations(?int $userId = null): Collection
     {
         return AbsenceRecord::with(['user', 'motif'])
+            ->when($userId !== null, fn ($query) => $query->where('user_id', $userId))
             ->orderByDesc('date_debut')
             ->get();
     }
