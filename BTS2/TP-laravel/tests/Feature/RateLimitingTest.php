@@ -60,5 +60,10 @@ class RateLimitingTest extends TestCase
         $fallbackPasskeyLimit = $passkeyLimiter($fallbackPasskeyRequest);
         $this->assertSame(10, $fallbackPasskeyLimit->maxAttempts);
         $this->assertSame($session->getId().'|192.0.2.10', $fallbackPasskeyLimit->key);
+
+        $session->put('login.id', ['invalid']);
+        $fallbackTwoFactorLimit = $twoFactorLimiter($twoFactorRequest);
+        $this->assertSame(5, $fallbackTwoFactorLimit->maxAttempts);
+        $this->assertSame($session->getId(), $fallbackTwoFactorLimit->key);
     }
 }
