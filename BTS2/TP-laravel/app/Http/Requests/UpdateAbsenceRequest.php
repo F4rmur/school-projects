@@ -11,6 +11,7 @@ class UpdateAbsenceRequest extends BaseAbsenceRequest
         return Gate::allows('update', $this->route('numeroAbsence'));
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function rules(): array
     {
         return $this->sharedRules();

@@ -64,7 +64,7 @@ class RolesController extends Controller
         $abilityNames = $validated['abilities'] ?? [];
         unset($validated['abilities']);
 
-        if ($role->name === 'admin') {
+        if ($role->getAttribute('name') === 'admin') {
             $abilityNames[] = 'manage-roles';
         }
 

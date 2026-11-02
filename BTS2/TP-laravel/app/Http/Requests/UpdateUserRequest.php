@@ -13,6 +13,7 @@ class UpdateUserRequest extends BaseUserRequest
         return Gate::allows('update', $this->route('idUser'));
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function rules(): array
     {
         $user = $this->route('idUser');

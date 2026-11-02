@@ -16,11 +16,13 @@ class StoreAbsenceRequest extends BaseAbsenceRequest
         return Gate::allows('create', AbsenceRecord::class);
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function rules(): array
     {
         return $this->sharedRules();
     }
 
+    /** @return array<int, \Closure(Validator): void> */
     public function after(): array
     {
         return [

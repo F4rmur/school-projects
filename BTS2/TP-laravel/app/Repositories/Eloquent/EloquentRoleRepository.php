@@ -28,12 +28,18 @@ class EloquentRoleRepository implements RoleRepository
 
     public function availableAbilityNames(): array
     {
-        return $this->availableAbilities()->pluck('name')->all();
+        return array_values(array_map(
+            static fn (mixed $abilityName): string => (string) $abilityName,
+            $this->availableAbilities()->pluck('name')->all(),
+        ));
     }
 
     public function abilityNames(Role $role): array
     {
-        return $role->abilities()->pluck('name')->all();
+        return array_values(array_map(
+            static fn (mixed $abilityName): string => (string) $abilityName,
+            $role->abilities()->pluck('name')->all(),
+        ));
     }
 
     public function create(array $attributes, array $abilityNames): Role

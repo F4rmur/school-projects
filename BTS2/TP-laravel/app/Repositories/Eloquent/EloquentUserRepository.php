@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class EloquentUserRepository implements UserRepository
 {
+    /** @return Collection<int, UserRecord> */
     public function allWithAbsences(?int $userId = null): Collection
     {
         return UserRecord::with('absences.motif')
@@ -17,6 +18,7 @@ class EloquentUserRepository implements UserRepository
             ->get();
     }
 
+    /** @return Collection<int, UserRecord> */
     public function forAbsenceForm(bool $manageAll, int $currentUserId): Collection
     {
         return $manageAll
@@ -29,11 +31,13 @@ class EloquentUserRepository implements UserRepository
         return UserRecord::find($id);
     }
 
+    /** @param array<string, mixed> $attributes */
     public function create(array $attributes): UserRecord
     {
         return UserRecord::create($attributes);
     }
 
+    /** @param array<string, mixed> $attributes */
     public function update(UserRecord $user, array $attributes): void
     {
         $user->update($attributes);

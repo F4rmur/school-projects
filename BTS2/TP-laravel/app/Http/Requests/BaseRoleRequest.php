@@ -7,6 +7,10 @@ use Illuminate\Validation\Rule;
 
 abstract class BaseRoleRequest extends FormRequest
 {
+    /**
+     * @param  list<string>  $abilityNames
+     * @return array<string, array<int, mixed>>
+     */
     protected function sharedRules(array $abilityNames): array
     {
         return [

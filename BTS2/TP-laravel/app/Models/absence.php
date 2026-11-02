@@ -32,16 +32,19 @@ class absence extends Model
         ];
     }
 
+    /** @return BelongsTo<users, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(users::class, 'user_id');
     }
 
+    /** @return BelongsTo<Motif, $this> */
     public function motif(): BelongsTo
     {
         return $this->belongsTo(Motif::class, 'motif_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');

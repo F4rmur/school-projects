@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateAbsenceRequest;
 use App\Mail\AbsenceRequestApproved;
 use App\Mail\AbsenceRequestCreated;
 use App\Models\absence as AbsenceRecord;
+use App\Models\Motif;
 use App\Models\User;
+use App\Models\users as UserRecord;
 use App\Repositories\Contracts\AbsenceRepository;
 use App\Repositories\Contracts\MotifRepository;
 use App\Repositories\Contracts\UserRepository;
@@ -122,7 +124,7 @@ class AbsenceController extends Controller
     }
 
     /**
-     * @return array{users: Collection, motifs: Collection}
+     * @return array{users: Collection<int, UserRecord>, motifs: Collection<int, Motif>}
      */
     private function absenceFormOptions(): array
     {

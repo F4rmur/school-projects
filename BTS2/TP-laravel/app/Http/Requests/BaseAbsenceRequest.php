@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 
 abstract class BaseAbsenceRequest extends FormRequest
 {
+    /** @return array<string, array<int, mixed>> */
     protected function sharedRules(): array
     {
         return [

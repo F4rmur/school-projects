@@ -14,6 +14,7 @@ class users extends Model
 
     protected $fillable = ['nom', 'prenom', 'sexe', 'email', 'password'];
 
+    /** @return HasMany<absence, $this> */
     public function absences(): HasMany
     {
         return $this->hasMany(absence::class, 'user_id');

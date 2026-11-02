@@ -12,6 +12,7 @@ class StoreUserRequest extends BaseUserRequest
         return Gate::allows('create', UserRecord::class);
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function rules(): array
     {
         return array_replace($this->sharedRules(), [

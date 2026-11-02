@@ -7,6 +7,7 @@ use Illuminate\Validation\Rule;
 
 abstract class BaseUserRequest extends FormRequest
 {
+    /** @return array<string, array<int, mixed>> */
     protected function sharedRules(): array
     {
         return [

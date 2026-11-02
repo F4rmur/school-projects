@@ -13,6 +13,7 @@ class StoreRoleRequest extends BaseRoleRequest
         return Gate::allows('manage-roles');
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function rules(RoleRepository $roles): array
     {
         return array_replace($this->sharedRules($roles->availableAbilityNames()), [

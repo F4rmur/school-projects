@@ -16,6 +16,9 @@ class EloquentAbsenceRepository implements AbsenceRepository
             ->get();
     }
 
+    /**
+     * @return Collection<int, AbsenceRecord>
+     */
     public function paidForUser(int|string $userId): Collection
     {
         return AbsenceRecord::query()
