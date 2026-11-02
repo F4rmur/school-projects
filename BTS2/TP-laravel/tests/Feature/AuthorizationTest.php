@@ -8,6 +8,7 @@ use App\Models\absence as AbsenceRecord;
 use App\Models\Motif;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -129,6 +130,57 @@ class AuthorizationTest extends TestCase
 
         $this->assertDatabaseHas('users', ['email' => 'alice@example.test']);
         $this->assertTrue(User::query()->where('email', 'alice@example.test')->firstOrFail()->isA('utilisateur'));
+    }
+
+    public function test_admin_can_open_user_forms_and_update_a_users_password(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+        $user = User::factory()->create();
+        $user->assign('utilisateur');
+
+        $this->actingAs($admin)
+            ->get(route('user.index'))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->get(route('user.create'))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->put(route('user.update', $user->getKey()), [
+                'nom' => $user->nom,
+                'prenom' => $user->prenom,
+                'sexe' => 'homme',
+                'email' => $user->email,
+                'password' => 'UpdatedSecure123!',
+                'password_confirmation' => 'UpdatedSecure123!',
+                'role' => 'utilisateur',
+            ])
+            ->assertRedirect(route('user.show', $user->getKey()));
+
+        $this->assertTrue(Hash::check('UpdatedSecure123!', $user->fresh()->password));
+    }
+
+    public function test_admin_can_open_absence_create_and_edit_forms(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+        $owner = User::factory()->create();
+        $motif = Motif::factory()->create();
+        $absence = AbsenceRecord::factory()->create([
+            'user_id' => $owner->getKey(),
+            'motif_id' => $motif->getKey(),
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('absence.create', ['user_id' => $owner->getKey()]))
+            ->assertOk()
+            ->assertViewHas('selectedUserId', $owner->getKey());
+
+        $this->actingAs($admin)
+            ->get(route('absence.edit', $absence))
+            ->assertOk();
     }
 
     public function test_admin_can_change_a_users_details_and_role(): void
@@ -265,9 +317,10 @@ class AuthorizationTest extends TestCase
             ])
             ->assertRedirect();
 
+        $ownedAbsence->refresh();
+        $this->assertSame('2026-09-12', $ownedAbsence->date_debut->toDateString());
         $this->assertDatabaseHas('absences', [
             'id' => $ownedAbsence->id,
-            'date_debut' => '2026-09-12',
             'status' => AbsenceRecord::STATUS_PENDING,
             'approved_by' => null,
             'approved_at' => null,
@@ -294,9 +347,10 @@ class AuthorizationTest extends TestCase
             ])
             ->assertRedirect();
 
+        $absence->refresh();
+        $this->assertSame('2026-09-14', $absence->date_debut->toDateString());
         $this->assertDatabaseHas('absences', [
             'id' => $absence->id,
-            'date_debut' => '2026-09-14',
         ]);
     }
 

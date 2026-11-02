@@ -24,7 +24,7 @@ class RolesTest extends TestCase
             ])
             ->assertRedirect(route('roles.index'));
 
-        $role = Role::query()->where('name', 'gestionnaire')->firstOrFail();
+        $role = Role::query()->where('name', 'nouveau-role')->firstOrFail();
         $this->assertTrue($role->can('manage-users'));
         $this->assertFalse($role->can('manage-all-absences'));
 
@@ -37,6 +37,7 @@ class RolesTest extends TestCase
             ->assertRedirect(route('roles.index'));
 
         $role->refresh();
+        $this->assertSame('gestionnaire', $role->name);
         $this->assertTrue($role->can('manage-all-absences'));
         $this->assertFalse($role->can('manage-users'));
 
@@ -89,5 +90,24 @@ class RolesTest extends TestCase
             'title' => 'Gestionnaire',
         ]);
         $this->assertDatabaseMissing('roles', ['name' => 'nouveau-role']);
+    }
+
+    public function test_admin_can_view_role_management_pages(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+        $role = Role::query()->where('name', 'utilisateur')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('roles.index'))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->get(route('roles.create'))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->get(route('roles.edit', $role))
+            ->assertOk();
     }
 }

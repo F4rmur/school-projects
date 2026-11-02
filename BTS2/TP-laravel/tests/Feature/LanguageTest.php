@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class LanguageTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_ui_translation_catalogues_have_the_same_keys(): void
     {
         $locales = ['fr', 'en', 'es'];
@@ -80,5 +83,14 @@ class LanguageTest extends TestCase
             ->post(route('language.update'), ['locale' => 'de'])
             ->assertRedirect(route('login'))
             ->assertSessionHasErrors('locale');
+    }
+
+    public function test_non_string_session_locale_falls_back_to_the_default_language(): void
+    {
+        config(['session.driver' => 'array']);
+
+        $this->withSession(['locale' => ['en']])
+            ->get(route('login'))
+            ->assertSee('lang="'.config('app.fallback_locale').'"', false);
     }
 }
