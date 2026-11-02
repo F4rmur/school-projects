@@ -18,8 +18,7 @@ class AuthorizationPoliciesTest extends TestCase
     {
         $owner = User::factory()->create();
         $otherUser = User::factory()->create();
-        $manager = User::factory()->create();
-        $manager->assign('admin');
+        $manager = $this->createAdmin();
         $absence = AbsenceRecord::factory()->create(['user_id' => $owner->getKey()]);
         $policy = new AbsencePolicy;
 
@@ -42,8 +41,7 @@ class AuthorizationPoliciesTest extends TestCase
     {
         $owner = User::factory()->create();
         $otherUser = User::factory()->create();
-        $manager = User::factory()->create();
-        $manager->assign('admin');
+        $manager = $this->createAdmin();
         $ownRecord = new UserRecord;
         $ownRecord->setAttribute($ownRecord->getKeyName(), $owner->getKey());
         $otherRecord = UserRecord::factory()->create();
@@ -61,5 +59,13 @@ class AuthorizationPoliciesTest extends TestCase
         $this->assertFalse($policy->restore($manager, $otherRecord));
         $this->assertFalse($policy->forceDelete($manager, $otherRecord));
         $this->assertFalse($policy->view($otherUser, $otherRecord));
+    }
+
+    private function createAdmin(): User
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+
+        return $admin;
     }
 }

@@ -14,8 +14,8 @@ class EloquentMotifRepositoryTest extends TestCase
 
     public function test_all_returns_motifs_and_motif_relationship_returns_its_absences(): void
     {
-        $firstMotif = Motif::factory()->create(['libelle' => 'Retard']);
-        $secondMotif = Motif::factory()->create(['libelle' => 'Maladie']);
+        $firstMotif = Motif::factory()->create();
+        $secondMotif = Motif::factory()->create();
         $absence = AbsenceRecord::factory()->create(['motif_id' => $firstMotif->getKey()]);
 
         $motifs = app(MotifRepository::class)->all();

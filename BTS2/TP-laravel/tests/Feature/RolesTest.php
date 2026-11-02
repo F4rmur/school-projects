@@ -13,41 +13,41 @@ class RolesTest extends TestCase
 
     public function test_admin_can_create_and_update_roles_and_their_abilities(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
+        $roleName = $this->randomRoleName();
+        $roleTitle = fake()->sentence(3);
+        $updatedRoleName = $this->randomRoleName();
+        $updatedRoleTitle = fake()->sentence(3);
 
         $this->actingAs($admin)
-            ->post(route('roles.store'), [
-                'name' => 'nouveau-role',
-                'title' => 'Nouveau rôle',
-                'abilities' => ['manage-users'],
-            ])
+            ->post(route('roles.store'), $this->rolePayload($roleName, $roleTitle, ['manage-users']))
             ->assertRedirect(route('roles.index'));
 
-        $role = Role::query()->where('name', 'nouveau-role')->firstOrFail();
+        $role = Role::query()->where('name', $roleName)->firstOrFail();
         $this->assertTrue($role->can('manage-users'));
         $this->assertFalse($role->can('manage-all-absences'));
 
         $this->actingAs($admin)
-            ->put(route('roles.update', $role), [
-                'name' => 'gestionnaire',
-                'title' => 'Gestionnaire modifié',
-                'abilities' => ['manage-all-absences'],
-            ])
+            ->put(route('roles.update', $role), $this->rolePayload(
+                $updatedRoleName,
+                $updatedRoleTitle,
+                ['manage-all-absences'],
+            ))
             ->assertRedirect(route('roles.index'));
 
         $role->refresh();
-        $this->assertSame('gestionnaire', $role->name);
+        $this->assertSame($updatedRoleName, $role->name);
+        $this->assertSame($updatedRoleTitle, $role->title);
         $this->assertTrue($role->can('manage-all-absences'));
         $this->assertFalse($role->can('manage-users'));
 
         $adminRole = Role::query()->where('name', 'admin')->firstOrFail();
         $this->actingAs($admin)
-            ->put(route('roles.update', $adminRole), [
-                'name' => 'admin',
-                'title' => 'Admin',
-                'abilities' => ['manage-users'],
-            ])
+            ->put(route('roles.update', $adminRole), $this->rolePayload(
+                'admin',
+                fake()->sentence(3),
+                ['manage-users'],
+            ))
             ->assertRedirect(route('roles.index'));
 
         $this->assertTrue($admin->fresh()->can('manage-roles'));
@@ -56,9 +56,12 @@ class RolesTest extends TestCase
     public function test_user_without_manage_roles_cannot_create_or_view_roles(): void
     {
         $user = User::factory()->create();
+        $roleName = $this->randomRoleName();
+        $roleTitle = fake()->sentence(3);
+        $roleToCreateName = $this->randomRoleName();
         $role = Role::query()->create([
-            'name' => 'gestionnaire',
-            'title' => 'Gestionnaire',
+            'name' => $roleName,
+            'title' => $roleTitle,
         ]);
 
         $this->actingAs($user)
@@ -66,11 +69,11 @@ class RolesTest extends TestCase
             ->assertForbidden();
 
         $this->actingAs($user)
-            ->post(route('roles.store'), [
-                'name' => 'gestionnaire',
-                'title' => 'Gestionnaire',
-                'abilities' => ['manage-users'],
-            ])
+            ->post(route('roles.store'), $this->rolePayload(
+                $roleToCreateName,
+                fake()->sentence(3),
+                ['manage-users'],
+            ))
             ->assertForbidden();
 
         $this->actingAs($user)
@@ -78,24 +81,23 @@ class RolesTest extends TestCase
             ->assertForbidden();
 
         $this->actingAs($user)
-            ->put(route('roles.update', $role), [
-                'name' => 'gestionnaire',
-                'title' => 'Modifié',
-                'abilities' => ['manage-users'],
-            ])
+            ->put(route('roles.update', $role), $this->rolePayload(
+                $roleName,
+                fake()->sentence(3),
+                ['manage-users'],
+            ))
             ->assertForbidden();
 
         $this->assertDatabaseHas('roles', [
             'id' => $role->getKey(),
-            'title' => 'Gestionnaire',
+            'title' => $roleTitle,
         ]);
-        $this->assertDatabaseMissing('roles', ['name' => 'nouveau-role']);
+        $this->assertDatabaseMissing('roles', ['name' => $roleToCreateName]);
     }
 
     public function test_admin_can_view_role_management_pages(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $role = Role::query()->where('name', 'utilisateur')->firstOrFail();
 
         $this->actingAs($admin)
@@ -109,5 +111,31 @@ class RolesTest extends TestCase
         $this->actingAs($admin)
             ->get(route('roles.edit', $role))
             ->assertOk();
+    }
+
+    private function createAdmin(): User
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+
+        return $admin;
+    }
+
+    /**
+     * @param  array<int, string>  $abilities
+     * @return array{name: string, title: string, abilities: array<int, string>}
+     */
+    private function rolePayload(string $name, string $title, array $abilities): array
+    {
+        return [
+            'name' => $name,
+            'title' => $title,
+            'abilities' => $abilities,
+        ];
+    }
+
+    private function randomRoleName(): string
+    {
+        return fake()->unique()->slug(2);
     }
 }

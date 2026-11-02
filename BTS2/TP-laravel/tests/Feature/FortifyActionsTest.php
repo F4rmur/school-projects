@@ -23,12 +23,11 @@ class FortifyActionsTest extends TestCase
     public function test_account_creation_hashes_password_and_rejects_duplicate_email(): void
     {
         $action = new CreateNewUser;
+        $password = $this->randomPassword();
         $input = [
-            'nom' => 'Martin',
-            'prenom' => 'Alice',
-            'email' => 'alice@example.test',
-            'password' => 'SecurePassword123!',
-            'password_confirmation' => 'SecurePassword123!',
+            ...$this->profileInput(fake()->unique()->safeEmail()),
+            'password' => $password,
+            'password_confirmation' => $password,
         ];
 
         $user = $action->create($input);
@@ -36,19 +35,16 @@ class FortifyActionsTest extends TestCase
         $this->assertDatabaseHas('users', ['email' => $input['email']]);
         $this->assertTrue(Hash::check($input['password'], $user->password));
 
-        try {
+        $this->assertValidationError('email', function () use ($action, $input): void {
             $action->create($input);
-            $this->fail('A duplicate email should be rejected.');
-        } catch (ValidationException $exception) {
-            $this->assertArrayHasKey('email', $exception->errors());
-        }
+        });
     }
 
     public function test_password_reset_updates_the_password_and_rejects_unconfirmed_passwords(): void
     {
         $user = User::factory()->create();
         $action = new ResetUserPassword;
-        $password = 'AnotherSecure123!';
+        $password = $this->randomPassword();
 
         $action->reset($user, [
             'password' => $password,
@@ -57,21 +53,19 @@ class FortifyActionsTest extends TestCase
 
         $this->assertTrue(Hash::check($password, $user->fresh()->password));
 
-        try {
+        $unconfirmedPassword = $this->randomPassword();
+        $this->assertValidationError('password', function () use ($action, $user, $unconfirmedPassword): void {
             $action->reset($user, [
-                'password' => 'DifferentSecure123!',
-                'password_confirmation' => 'NotTheSame123!',
+                'password' => $unconfirmedPassword,
+                'password_confirmation' => $unconfirmedPassword.'-different',
             ]);
-            $this->fail('An unconfirmed password should be rejected.');
-        } catch (ValidationException $exception) {
-            $this->assertArrayHasKey('password', $exception->errors());
-        }
+        });
     }
 
     public function test_authenticated_user_can_change_their_password(): void
     {
         $user = User::factory()->create();
-        $password = 'UpdatedSecure123!';
+        $password = $this->randomPassword();
 
         $this->actingAs($user);
 
@@ -90,16 +84,14 @@ class FortifyActionsTest extends TestCase
         $originalPassword = $user->password;
         $this->actingAs($user);
 
-        try {
+        $unconfirmedPassword = $this->randomPassword();
+        $this->assertValidationError('current_password', function () use ($user, $unconfirmedPassword): void {
             (new UpdateUserPassword)->update($user, [
-                'current_password' => 'incorrect-password',
-                'password' => 'UpdatedSecure123!',
-                'password_confirmation' => 'UpdatedSecure123!',
+                'current_password' => 'wrong-'.$this->randomPassword(),
+                'password' => $unconfirmedPassword,
+                'password_confirmation' => $unconfirmedPassword,
             ]);
-            $this->fail('An incorrect current password should be rejected.');
-        } catch (ValidationException $exception) {
-            $this->assertArrayHasKey('current_password', $exception->errors());
-        }
+        });
 
         $this->assertSame($originalPassword, $user->fresh()->password);
     }
@@ -109,11 +101,7 @@ class FortifyActionsTest extends TestCase
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
         $action = new UpdateUserProfileInformation;
-        $input = [
-            'nom' => 'Nouveau nom',
-            'prenom' => 'Nouveau prénom',
-            'email' => 'updated@example.test',
-        ];
+        $input = $this->profileInput(fake()->unique()->safeEmail());
 
         $action->update($user, $input);
 
@@ -122,20 +110,20 @@ class FortifyActionsTest extends TestCase
             ...$input,
         ]);
 
-        try {
+        $this->assertValidationError('email', function () use ($action, $input, $otherUser, $user): void {
             $action->update($user, [
                 ...$input,
                 'email' => $otherUser->email,
             ]);
-            $this->fail('An email already used by another account should be rejected.');
-        } catch (ValidationException $exception) {
-            $this->assertArrayHasKey('email', $exception->errors());
-        }
+        });
     }
 
     public function test_email_change_resets_verification_and_sends_a_verification_notification(): void
     {
         Notification::fake();
+        $originalEmail = fake()->unique()->safeEmail();
+        $updatedEmail = fake()->unique()->safeEmail();
+        $profile = $this->profileInput($originalEmail);
         $user = new class extends User implements MustVerifyEmail
         {
             use MustVerifyEmailTrait;
@@ -143,20 +131,41 @@ class FortifyActionsTest extends TestCase
             protected $table = 'users';
         };
         $user->forceFill([
-            'nom' => 'Martin',
-            'prenom' => 'Alice',
-            'email' => 'alice@example.test',
-            'password' => Hash::make('password'),
+            ...$profile,
+            'password' => Hash::make($this->randomPassword()),
             'email_verified_at' => now(),
         ])->save();
 
-        (new UpdateUserProfileInformation)->update($user, [
-            'nom' => 'Martin',
-            'prenom' => 'Alice',
-            'email' => 'alice.updated@example.test',
-        ]);
+        (new UpdateUserProfileInformation)->update($user, $this->profileInput($updatedEmail));
 
         $this->assertNull($user->fresh()->email_verified_at);
         Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    /**
+     * @return array{nom: string, prenom: string, email: string}
+     */
+    private function profileInput(string $email): array
+    {
+        return [
+            'nom' => fake()->lastName(),
+            'prenom' => fake()->firstName(),
+            'email' => $email,
+        ];
+    }
+
+    private function randomPassword(): string
+    {
+        return fake()->password(12);
+    }
+
+    private function assertValidationError(string $field, callable $action): void
+    {
+        try {
+            $action();
+            $this->fail("Expected a validation error for [$field].");
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey($field, $exception->errors());
+        }
     }
 }

@@ -17,15 +17,15 @@ class AbsenceValidationTest extends TestCase
 
     public function test_invalid_request_stops_before_business_rule_checks(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $motif = Motif::factory()->create();
+        $date = fake()->date();
 
         $this->actingAs($admin)
             ->post(route('absence.store'), [
                 'motif_id' => $motif->getKey(),
-                'date_debut' => '2026-10-05',
-                'date_fin' => '2026-10-05',
+                'date_debut' => $date,
+                'date_fin' => $date,
             ])
             ->assertSessionHasErrors('user_id');
     }
@@ -33,16 +33,18 @@ class AbsenceValidationTest extends TestCase
     public function test_paternity_leave_is_rejected_for_a_woman(): void
     {
         $user = UserRecord::factory()->create(['sexe' => 'femme']);
+        $date = fake()->date();
 
-        $this->submitAbsence($user, 'paternite', '2026-10-05', '2026-10-05')
+        $this->submitAbsence($user, 'paternite', $date, $date)
             ->assertSessionHasErrors('type_conge');
     }
 
     public function test_maternity_leave_is_rejected_for_a_man(): void
     {
         $user = UserRecord::factory()->create(['sexe' => 'homme']);
+        $date = fake()->date();
 
-        $this->submitAbsence($user, 'maternite', '2026-10-05', '2026-10-05')
+        $this->submitAbsence($user, 'maternite', $date, $date)
             ->assertSessionHasErrors('type_conge');
     }
 
@@ -51,11 +53,13 @@ class AbsenceValidationTest extends TestCase
         Mail::fake();
         $woman = UserRecord::factory()->create(['sexe' => 'femme']);
         $man = UserRecord::factory()->create(['sexe' => 'homme']);
+        $womanDate = fake()->date();
+        $manDate = fake()->date();
 
-        $this->submitAbsence($woman, 'maternite', '2026-10-05', '2026-10-05')
+        $this->submitAbsence($woman, 'maternite', $womanDate, $womanDate)
             ->assertRedirect(route('user.show', $woman));
 
-        $this->submitAbsence($man, 'paternite', '2026-10-06', '2026-10-06')
+        $this->submitAbsence($man, 'paternite', $manDate, $manDate)
             ->assertRedirect(route('user.show', $man));
 
         $this->assertDatabaseCount('absences', 2);
@@ -115,8 +119,7 @@ class AbsenceValidationTest extends TestCase
         string $dateEnd,
         ?Motif $motif = null,
     ): TestResponse {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $motif ??= Motif::factory()->create();
 
         return $this->actingAs($admin)->post(route('absence.store'), [
@@ -126,5 +129,13 @@ class AbsenceValidationTest extends TestCase
             'date_debut' => $dateStart,
             'date_fin' => $dateEnd,
         ]);
+    }
+
+    private function createAdmin(): User
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+
+        return $admin;
     }
 }

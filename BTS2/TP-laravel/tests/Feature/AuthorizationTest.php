@@ -20,20 +20,15 @@ class AuthorizationTest extends TestCase
     {
         Mail::fake();
 
-        $creator = User::factory()->create();
-        $creator->assign('admin');
+        $creator = $this->createAdmin();
         $target = User::factory()->create();
-        $manager = User::factory()->create();
-        $manager->assign('admin');
+        $manager = $this->createAdmin();
         $otherUser = User::factory()->create();
         $motif = Motif::factory()->create();
 
         $this->actingAs($creator)
             ->post(route('absence.store'), [
-                'user_id' => $target->getKey(),
-                'motif_id' => $motif->getKey(),
-                'date_debut' => '2026-10-05',
-                'date_fin' => '2026-10-05',
+                ...$this->absencePayload($target->getKey(), $motif->getKey(), '2026-10-05', '2026-10-05'),
                 'status' => AbsenceRecord::STATUS_APPROVED,
                 'approved_by' => $creator->getKey(),
                 'approved_at' => '2026-09-30 12:00:00',
@@ -79,8 +74,7 @@ class AuthorizationTest extends TestCase
     {
         Mail::fake();
 
-        $manager = User::factory()->create();
-        $manager->assign('admin');
+        $manager = $this->createAdmin();
         $absence = AbsenceRecord::factory()->create([
             'status' => AbsenceRecord::STATUS_PENDING,
         ]);
@@ -113,29 +107,30 @@ class AuthorizationTest extends TestCase
 
     public function test_admin_can_create_a_user(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
+        $userData = [
+            'nom' => fake()->lastName(),
+            'prenom' => fake()->firstName(),
+            'sexe' => fake()->randomElement(['homme', 'femme']),
+            'email' => fake()->unique()->safeEmail(),
+        ];
 
         $this->actingAs($admin)
             ->post(route('user.store'), [
-                'nom' => 'Administre',
-                'prenom' => 'Alice',
-                'sexe' => 'femme',
-                'email' => 'alice@example.test',
+                ...$userData,
                 'password' => 'password',
                 'password_confirmation' => 'password',
                 'role' => 'utilisateur',
             ])
             ->assertRedirect();
 
-        $this->assertDatabaseHas('users', ['email' => 'alice@example.test']);
-        $this->assertTrue(User::query()->where('email', 'alice@example.test')->firstOrFail()->isA('utilisateur'));
+        $this->assertDatabaseHas('users', ['email' => $userData['email']]);
+        $this->assertTrue(User::query()->where('email', $userData['email'])->firstOrFail()->isA('utilisateur'));
     }
 
     public function test_admin_can_open_user_forms_and_update_a_users_password(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $user = User::factory()->create();
         $user->assign('utilisateur');
 
@@ -164,8 +159,7 @@ class AuthorizationTest extends TestCase
 
     public function test_admin_can_open_absence_create_and_edit_forms(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $owner = User::factory()->create();
         $motif = Motif::factory()->create();
         $absence = AbsenceRecord::factory()->create([
@@ -185,8 +179,7 @@ class AuthorizationTest extends TestCase
 
     public function test_admin_can_change_a_users_details_and_role(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $user = User::factory()->create();
         $user->assign('utilisateur');
 
@@ -196,9 +189,9 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($admin)
             ->put(route('user.update', $user->getKey()), [
-                'nom' => 'Modifie',
-                'prenom' => 'Alice',
-                'sexe' => 'femme',
+                'nom' => fake()->lastName(),
+                'prenom' => fake()->firstName(),
+                'sexe' => fake()->randomElement(['homme', 'femme']),
                 'email' => $user->email,
                 'password' => '',
                 'password_confirmation' => '',
@@ -206,10 +199,7 @@ class AuthorizationTest extends TestCase
             ])
             ->assertRedirect(route('user.show', $user->getKey()));
 
-        $this->assertDatabaseHas('users', [
-            'id' => $user->getKey(),
-            'nom' => 'Modifie',
-        ]);
+        $this->assertDatabaseHas('users', ['id' => $user->getKey()]);
         $this->assertTrue($user->fresh()->isA('admin'));
     }
 
@@ -229,14 +219,16 @@ class AuthorizationTest extends TestCase
 
     public function test_utilisateur_can_only_view_their_own_user_record(): void
     {
-        $user = User::factory()->create(['email' => 'own@example.test']);
+        $ownEmail = fake()->unique()->safeEmail();
+        $otherEmail = fake()->unique()->safeEmail();
+        $user = User::factory()->create(['email' => $ownEmail]);
         $user->assign('utilisateur');
-        $otherUser = User::factory()->create(['email' => 'other@example.test']);
+        $otherUser = User::factory()->create(['email' => $otherEmail]);
 
         $this->actingAs($user)
             ->get(route('user.index'))
-            ->assertSee('own@example.test')
-            ->assertDontSee('other@example.test');
+            ->assertSee($ownEmail)
+            ->assertDontSee($otherEmail);
 
         $this->actingAs($user)
             ->get(route('user.show', $user->getKey()))
@@ -291,12 +283,10 @@ class AuthorizationTest extends TestCase
         ]);
 
         $this->actingAs($owner)
-            ->put(route('absence.update', $absence), [
-                'user_id' => $otherUser->id,
-                'motif_id' => $motif->id,
-                'date_debut' => '2026-09-10',
-                'date_fin' => '2026-09-11',
-            ])
+            ->put(
+                route('absence.update', $absence),
+                $this->absencePayload($otherUser->id, $motif->id, '2026-09-10', '2026-09-11'),
+            )
             ->assertForbidden();
 
         $approver = User::factory()->create();
@@ -309,12 +299,10 @@ class AuthorizationTest extends TestCase
         ]);
 
         $this->actingAs($owner)
-            ->put(route('absence.update', $ownedAbsence), [
-                'user_id' => $owner->id,
-                'motif_id' => $motif->id,
-                'date_debut' => '2026-09-12',
-                'date_fin' => '2026-09-13',
-            ])
+            ->put(
+                route('absence.update', $ownedAbsence),
+                $this->absencePayload($owner->id, $motif->id, '2026-09-12', '2026-09-13'),
+            )
             ->assertRedirect();
 
         $ownedAbsence->refresh();
@@ -329,8 +317,7 @@ class AuthorizationTest extends TestCase
 
     public function test_admin_can_update_another_users_absence(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $otherUser = User::factory()->create();
         $motif = Motif::factory()->create();
         $absence = AbsenceRecord::factory()->create([
@@ -339,25 +326,24 @@ class AuthorizationTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->put(route('absence.update', $absence), [
-                'user_id' => $otherUser->id,
-                'motif_id' => $motif->id,
-                'date_debut' => '2026-09-14',
-                'date_fin' => '2026-09-15',
-            ])
+            ->put(
+                route('absence.update', $absence),
+                $this->absencePayload($otherUser->id, $motif->id, '2026-09-14', '2026-09-15'),
+            )
             ->assertRedirect();
 
         $absence->refresh();
         $this->assertSame('2026-09-14', $absence->date_debut->toDateString());
         $this->assertDatabaseHas('absences', [
             'id' => $absence->id,
+            'status' => AbsenceRecord::STATUS_PENDING,
+            'approved_by' => null,
         ]);
     }
 
     public function test_admin_can_edit_and_delete_an_absence(): void
     {
-        $admin = User::factory()->create();
-        $admin->assign('admin');
+        $admin = $this->createAdmin();
         $owner = User::factory()->create();
         $motif = Motif::factory()->create();
         $absence = AbsenceRecord::factory()->create([
@@ -374,5 +360,30 @@ class AuthorizationTest extends TestCase
             ->assertRedirect(route('user.show', $owner->getKey()));
 
         $this->assertDatabaseMissing('absences', ['id' => $absence->getKey()]);
+    }
+
+    private function createAdmin(): User
+    {
+        $admin = User::factory()->create();
+        $admin->assign('admin');
+
+        return $admin;
+    }
+
+    /**
+     * @return array{user_id: int|string, motif_id: int|string, date_debut: string, date_fin: string}
+     */
+    private function absencePayload(
+        int|string $userId,
+        int|string $motifId,
+        string $dateStart,
+        string $dateEnd,
+    ): array {
+        return [
+            'user_id' => $userId,
+            'motif_id' => $motifId,
+            'date_debut' => $dateStart,
+            'date_fin' => $dateEnd,
+        ];
     }
 }
