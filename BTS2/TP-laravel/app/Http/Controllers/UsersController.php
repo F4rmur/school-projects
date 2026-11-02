@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use LogicException;
 
 class UsersController extends Controller
 {
@@ -41,12 +42,12 @@ class UsersController extends Controller
     {
         $validated = $request->validated();
 
-        $role = $validated['role'];
+        $role = $request->validatedRoleName();
         unset($validated['role']);
-        $validated['password'] = Hash::make($validated['password']);
+        $validated['password'] = Hash::make($request->validatedPassword());
 
         $user = $this->users->create($validated);
-        $this->roles->syncForUser($user->getKey(), $role);
+        $this->roles->syncForUser($this->userKey($user), $role);
 
         return redirect()->route('user.show', $user)
             ->with('success', __('ui.flash.user_created'));
@@ -65,7 +66,7 @@ class UsersController extends Controller
         Gate::authorize('update', $idUser);
 
         $roles = $this->roles->all();
-        $currentRole = $this->roles->userRoleName($idUser->getKey()) ?? 'utilisateur';
+        $currentRole = $this->roles->userRoleName($this->userKey($idUser)) ?? 'utilisateur';
 
         return view('users.edit', [
             'user' => $idUser,
@@ -78,20 +79,33 @@ class UsersController extends Controller
     {
         $validated = $request->validated();
 
-        $role = $validated['role'];
+        $role = $request->validatedRoleName();
         unset($validated['role']);
 
-        if (filled($validated['password'] ?? null)) {
-            $validated['password'] = Hash::make($validated['password']);
+        $password = $request->validatedPassword();
+
+        if (filled($password)) {
+            $validated['password'] = Hash::make($password);
         } else {
             // A blank password means the existing credential remains unchanged.
             unset($validated['password']);
         }
 
         $this->users->update($idUser, $validated);
-        $this->roles->syncForUser($idUser->getKey(), $role);
+        $this->roles->syncForUser($this->userKey($idUser), $role);
 
         return redirect()->route('user.show', $idUser)
             ->with('success', __('ui.flash.user_updated'));
+    }
+
+    private function userKey(UserRecord $user): int|string
+    {
+        $key = $user->getKey();
+
+        if (! is_int($key) && ! is_string($key)) {
+            throw new LogicException('A persisted user must have an integer or string key.');
+        }
+
+        return $key;
     }
 }

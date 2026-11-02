@@ -27,12 +27,12 @@ class StoreAbsenceRequest extends BaseAbsenceRequest
     {
         return [
             function (Validator $validator): void {
-                $userId = $this->input('user_id');
-                $typeConge = $this->input('type_conge');
+                $userId = $this->integer('user_id');
+                $typeConge = $this->string('type_conge')->toString();
 
                 if (! $validator->errors()->hasAny(['user_id', 'type_conge'])
                     && in_array($typeConge, ['paternite', 'maternite'], true)) {
-                    $user = app(UserRepository::class)->find((int) $userId);
+                    $user = app(UserRepository::class)->find($userId);
                     $requiredSexe = $typeConge === 'paternite' ? 'homme' : 'femme';
 
                     if (! $user || $user->sexe !== $requiredSexe) {
@@ -46,17 +46,17 @@ class StoreAbsenceRequest extends BaseAbsenceRequest
                     return;
                 }
 
-                $dateDebut = $this->input('date_debut');
-                $dateFin = $this->input('date_fin');
+                $dateDebut = $this->string('date_debut')->toString();
+                $dateFin = $this->string('date_fin')->toString();
 
                 if ($typeConge === 'conges_payes') {
                     $dateDebutCarbon = Carbon::parse($dateDebut);
                     $dateFinCarbon = Carbon::parse($dateFin);
-                    $paidAbsences = app(AbsenceRepository::class)->paidForUser((int) $userId);
+                    $paidAbsences = app(AbsenceRepository::class)->paidForUser($userId);
 
                     for ($year = $dateDebutCarbon->year; $year <= $dateFinCarbon->year; $year++) {
-                        $yearStart = Carbon::create($year, 1, 1);
-                        $yearEnd = Carbon::create($year, 12, 31);
+                        $yearStart = Carbon::parse($year.'-01-01');
+                        $yearEnd = Carbon::parse($year.'-12-31');
                         $newStart = $dateDebutCarbon->greaterThan($yearStart) ? $dateDebutCarbon : $yearStart;
                         $newEnd = $dateFinCarbon->lessThan($yearEnd) ? $dateFinCarbon : $yearEnd;
                         $paidDays = $newStart->diffInDays($newEnd) + 1;
@@ -80,7 +80,7 @@ class StoreAbsenceRequest extends BaseAbsenceRequest
                     }
                 }
 
-                if (app(AbsenceRepository::class)->hasOverlap((int) $userId, $dateDebut, $dateFin)) {
+                if (app(AbsenceRepository::class)->hasOverlap($userId, $dateDebut, $dateFin)) {
                     $validator->errors()->add('date_fin', __('ui.validation.absence_overlap'));
                 }
             },

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\users as UserRecord;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use LogicException;
 
 class UpdateUserRequest extends BaseUserRequest
 {
@@ -28,5 +29,16 @@ class UpdateUserRequest extends BaseUserRequest
             ],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
+    }
+
+    public function validatedPassword(): ?string
+    {
+        $password = $this->validated('password');
+
+        if ($password !== null && ! is_string($password)) {
+            throw new LogicException('The validated password must be a string or null.');
+        }
+
+        return $password;
     }
 }

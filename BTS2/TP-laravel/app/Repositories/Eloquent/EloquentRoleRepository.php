@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 use Silber\Bouncer\Database\Ability;
 use Silber\Bouncer\Database\Role;
+use UnexpectedValueException;
 
 class EloquentRoleRepository implements RoleRepository
 {
@@ -28,18 +29,12 @@ class EloquentRoleRepository implements RoleRepository
 
     public function availableAbilityNames(): array
     {
-        return array_values(array_map(
-            static fn (mixed $abilityName): string => (string) $abilityName,
-            $this->availableAbilities()->pluck('name')->all(),
-        ));
+        return $this->stringNames($this->availableAbilities()->pluck('name')->all());
     }
 
     public function abilityNames(Role $role): array
     {
-        return array_values(array_map(
-            static fn (mixed $abilityName): string => (string) $abilityName,
-            $role->abilities()->pluck('name')->all(),
-        ));
+        return $this->stringNames($role->abilities()->pluck('name')->all());
     }
 
     public function create(array $attributes, array $abilityNames): Role
@@ -67,6 +62,31 @@ class EloquentRoleRepository implements RoleRepository
 
     public function userRoleName(int|string $userId): ?string
     {
-        return User::query()->findOrFail($userId)->getRoles()->first();
+        $roleName = User::query()->findOrFail($userId)->getRoles()->first();
+
+        if ($roleName !== null && ! is_string($roleName)) {
+            throw new UnexpectedValueException('Role names must be strings.');
+        }
+
+        return $roleName;
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $values
+     * @return list<string>
+     */
+    private function stringNames(array $values): array
+    {
+        $names = [];
+
+        foreach ($values as $value) {
+            if (! is_string($value)) {
+                throw new UnexpectedValueException('Role and ability names must be strings.');
+            }
+
+            $names[] = $value;
+        }
+
+        return $names;
     }
 }

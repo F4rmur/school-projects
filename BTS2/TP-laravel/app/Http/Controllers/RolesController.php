@@ -38,7 +38,7 @@ class RolesController extends Controller
     {
         $validated = $request->validated();
 
-        $abilityNames = $validated['abilities'] ?? [];
+        $abilityNames = $request->validatedAbilityNames();
         unset($validated['abilities']);
 
         $this->roles->create($validated, $abilityNames);
@@ -61,7 +61,7 @@ class RolesController extends Controller
     {
         $validated = $request->validated();
 
-        $abilityNames = $validated['abilities'] ?? [];
+        $abilityNames = $request->validatedAbilityNames();
         unset($validated['abilities']);
 
         if ($role->getAttribute('name') === 'admin') {
